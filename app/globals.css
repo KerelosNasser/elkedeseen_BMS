@@ -1,128 +1,383 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import url("https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@300;400;500;600;700;900&display=swap");
 
-@custom-variant dark (&:is(.dark *));
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.809 0.105 251.813);
-    --chart-2: oklch(0.623 0.214 259.815);
-    --chart-3: oklch(0.546 0.245 262.881);
-    --chart-4: oklch(0.488 0.243 264.376);
-    --chart-5: oklch(0.424 0.199 265.638);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.809 0.105 251.813);
-    --chart-2: oklch(0.623 0.214 259.815);
-    --chart-3: oklch(0.546 0.245 262.881);
-    --chart-4: oklch(0.488 0.243 264.376);
-    --chart-5: oklch(0.424 0.199 265.638);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
-}
-
-@theme inline {
-    --font-sans: var(--font-sans);
-    --color-sidebar-ring: var(--sidebar-ring);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar: var(--sidebar);
-    --color-chart-5: var(--chart-5);
-    --color-chart-4: var(--chart-4);
-    --color-chart-3: var(--chart-3);
-    --color-chart-2: var(--chart-2);
-    --color-chart-1: var(--chart-1);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-border: var(--border);
-    --color-destructive: var(--destructive);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-accent: var(--accent);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-muted: var(--muted);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-secondary: var(--secondary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-primary: var(--primary);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-popover: var(--popover);
-    --color-card-foreground: var(--card-foreground);
-    --color-card: var(--card);
-    --color-foreground: var(--foreground);
-    --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
-}
-
+/* ─── Base Layer ─────────────────────────────────────────── */
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-    }
-  body {
-    @apply bg-background text-foreground;
-    }
+  :root {
+    --church-red: #9b1c1f;
+    --church-gold: #d4af37;
+    --church-gold-light: #e8d7a5;
+    --church-bg: #f5efe4;
+    --church-text: #2a2a2a;
+    --church-text-muted: #6b5e4e;
+    --church-border: #d9c9a8;
+  }
+
   html {
-    @apply font-sans;
-    }
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-church-bg text-church-text font-body antialiased;
+    background-image: theme("backgroundImage.church-gradient");
+    min-height: 100vh;
+  }
+
+  * {
+    @apply border-church-border;
+  }
+
+  /* RTL support for Arabic */
+  [dir="rtl"],
+  .rtl {
+    direction: rtl;
+    text-align: right;
+  }
+}
+
+/* ─── Components Layer ───────────────────────────────────── */
+@layer components {
+
+  /* Layout utilities */
+  .church-container {
+    @apply w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .church-section {
+    @apply py-section-sm sm:py-section;
+  }
+
+  .church-background {
+    background-image: theme("backgroundImage.church-gradient-radial");
+    @apply min-h-screen;
+  }
+
+  /* Gold border */
+  .gold-border {
+    @apply border border-church-gold/60;
+    box-shadow: inset 0 1px 0 rgba(212, 175, 55, 0.3);
+  }
+
+  .gold-border-strong {
+    @apply border-2 border-church-gold;
+    box-shadow:
+      0 0 0 1px rgba(212, 175, 55, 0.15),
+      inset 0 1px 0 rgba(232, 215, 165, 0.6);
+  }
+
+  /* Shadow utilities */
+  .soft-shadow {
+    box-shadow: theme("boxShadow.church");
+  }
+
+  .soft-shadow-md {
+    box-shadow: theme("boxShadow.church-md");
+  }
+
+  .soft-shadow-lg {
+    box-shadow: theme("boxShadow.church-lg");
+  }
+
+  /* ── Section Title ──────────────────────────────────────── */
+  .section-title {
+    @apply font-title text-h1-ar text-church-red text-center leading-tight;
+    direction: rtl;
+  }
+
+  .section-title-en {
+    @apply font-title text-h1-ar text-church-red text-center leading-tight;
+  }
+
+  .section-subtitle {
+    @apply font-subtitle text-h3-ar text-church-text-muted text-center;
+    direction: rtl;
+  }
+
+  /* ── Gold Divider ───────────────────────────────────────── */
+  .gold-divider {
+    @apply relative flex items-center justify-center my-6 gap-4;
+  }
+
+  .gold-divider::before,
+  .gold-divider::after {
+    content: "";
+    @apply flex-1 h-px bg-gradient-to-r from-transparent via-church-gold to-transparent opacity-70;
+  }
+
+  .gold-divider-icon {
+    @apply text-church-gold text-xl flex-shrink-0 select-none;
+  }
+
+  .gold-divider-simple {
+    @apply w-full h-px my-6;
+    background: linear-gradient(90deg, transparent, #d4af37 30%, #e8d7a5 50%, #d4af37 70%, transparent);
+  }
+
+  /* ── Church Card ────────────────────────────────────────── */
+  .church-card {
+    @apply rounded-card bg-church-bg-card gold-border soft-shadow;
+    @apply transition-all duration-300;
+    background-image: theme("backgroundImage.card-gradient");
+  }
+
+  .church-card:hover {
+    box-shadow: theme("boxShadow.church-md");
+    @apply -translate-y-0.5;
+  }
+
+  .church-card-padded {
+    @apply church-card p-6 sm:p-8;
+  }
+
+  /* ── Church Button ──────────────────────────────────────── */
+  .church-button {
+    @apply inline-flex items-center justify-center gap-2;
+    @apply font-body font-semibold text-sm sm:text-base;
+    @apply px-6 py-3 rounded-pill;
+    @apply transition-all duration-200 cursor-pointer;
+    @apply select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-church-gold;
+  }
+
+  .church-button-primary {
+    @apply church-button text-white;
+    background-image: theme("backgroundImage.red-gradient");
+    box-shadow: 0 4px 16px rgba(155, 28, 31, 0.3), theme("boxShadow.gold-inset");
+  }
+
+  .church-button-primary:hover {
+    @apply brightness-110;
+    box-shadow: 0 6px 24px rgba(155, 28, 31, 0.4), theme("boxShadow.gold-inset");
+    @apply -translate-y-px;
+  }
+
+  .church-button-primary:active {
+    @apply translate-y-0 brightness-95;
+  }
+
+  .church-button-gold {
+    @apply church-button text-church-text;
+    background-image: theme("backgroundImage.gold-gradient");
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
+  }
+
+  .church-button-gold:hover {
+    @apply brightness-105 -translate-y-px;
+    box-shadow: 0 6px 24px rgba(212, 175, 55, 0.45);
+  }
+
+  .church-button-outline {
+    @apply church-button bg-transparent text-church-red;
+    @apply border-2 border-church-red/70;
+  }
+
+  .church-button-outline:hover {
+    @apply bg-church-red text-white border-church-red;
+  }
+
+  .church-button-ghost {
+    @apply church-button bg-transparent text-church-text-muted;
+    @apply hover:bg-church-bg-warm hover:text-church-text;
+  }
+
+  /* ── Booking Slot ───────────────────────────────────────── */
+  .booking-slot {
+    @apply rounded-slot border font-body text-sm font-medium;
+    @apply flex flex-col items-center justify-center gap-0.5;
+    @apply p-3 cursor-pointer transition-all duration-200;
+    @apply select-none focus-visible:outline-none;
+  }
+
+  .booking-slot-available {
+    @apply booking-slot bg-church-bg-card border-church-border text-church-text;
+    box-shadow: theme("boxShadow.slot");
+  }
+
+  .booking-slot-available:hover {
+    @apply border-church-gold bg-church-gold-light/30 text-church-text;
+    box-shadow: theme("boxShadow.slot-hover");
+    @apply -translate-y-px;
+  }
+
+  .booking-slot-selected {
+    @apply booking-slot text-white;
+    background-image: theme("backgroundImage.red-gradient");
+    @apply border-church-red;
+    box-shadow: 0 4px 16px rgba(155, 28, 31, 0.3);
+  }
+
+  .booking-slot-booked {
+    @apply booking-slot bg-church-bg text-church-text-light;
+    @apply border-church-border-light cursor-not-allowed opacity-60;
+  }
+
+  .booking-slot-gold {
+    @apply booking-slot bg-church-gold-light/40 border-church-gold text-church-text;
+    box-shadow: theme("boxShadow.gold");
+  }
+
+  /* ── Calendar Day ───────────────────────────────────────── */
+  .calendar-day {
+    @apply aspect-square flex items-center justify-center rounded-lg;
+    @apply font-body text-sm font-medium cursor-pointer;
+    @apply transition-all duration-150 select-none;
+  }
+
+  .calendar-day-default {
+    @apply calendar-day text-church-text hover:bg-church-gold-light/40 hover:text-church-text;
+  }
+
+  .calendar-day-selected {
+    @apply calendar-day text-white;
+    background-image: theme("backgroundImage.red-gradient");
+    box-shadow: 0 2px 8px rgba(155, 28, 31, 0.35);
+  }
+
+  .calendar-day-today {
+    @apply calendar-day bg-church-gold-light/50 text-church-text;
+    @apply ring-1 ring-church-gold/60;
+  }
+
+  .calendar-day-disabled {
+    @apply calendar-day text-church-text-light opacity-40 cursor-not-allowed;
+  }
+
+  .calendar-day-has-slots {
+    @apply calendar-day-default relative;
+  }
+
+  .calendar-day-has-slots::after {
+    content: "";
+    @apply absolute bottom-1 left-1/2 -translate-x-1/2;
+    @apply w-1 h-1 rounded-full bg-church-gold;
+  }
+
+  /* ── Form Input ─────────────────────────────────────────── */
+  .form-input {
+    @apply w-full font-body text-base text-church-text;
+    @apply bg-church-bg-card rounded-slot px-4 py-3;
+    @apply border border-church-border;
+    @apply transition-all duration-200 outline-none;
+    @apply placeholder:text-church-text-light;
+  }
+
+  .form-input:focus {
+    @apply border-church-gold ring-2 ring-church-gold/20;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
+  }
+
+  .form-input:disabled {
+    @apply opacity-60 cursor-not-allowed bg-church-bg;
+  }
+
+  .form-input-error {
+    @apply form-input border-church-red ring-2 ring-church-red/20;
+  }
+
+  .form-label {
+    @apply block font-body font-semibold text-sm text-church-text mb-1.5;
+  }
+
+  .form-error {
+    @apply font-body text-xs text-church-red mt-1.5;
+  }
+
+  .form-hint {
+    @apply font-body text-xs text-church-text-muted mt-1.5;
+  }
+
+  /* ── Admin Table ────────────────────────────────────────── */
+  .admin-table {
+    @apply w-full font-body text-sm border-collapse;
+  }
+
+  .admin-table thead {
+    @apply bg-church-red text-white;
+  }
+
+  .admin-table th {
+    @apply px-4 py-3 text-left font-semibold text-xs uppercase tracking-wide;
+  }
+
+  .admin-table td {
+    @apply px-4 py-3 border-b border-church-border-light text-church-text;
+  }
+
+  .admin-table tbody tr {
+    @apply bg-church-bg-card transition-colors duration-150;
+  }
+
+  .admin-table tbody tr:hover {
+    @apply bg-church-gold-light/20;
+  }
+
+  .admin-table tbody tr:nth-child(even) {
+    @apply bg-church-bg;
+  }
+
+  /* ── Status Badges ──────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-pill text-xs font-semibold font-body;
+  }
+
+  .badge-confirmed {
+    @apply badge bg-emerald-100 text-emerald-800;
+  }
+
+  .badge-pending {
+    @apply badge bg-church-gold-light/70 text-amber-800;
+  }
+
+  .badge-cancelled {
+    @apply badge bg-red-100 text-church-red;
+  }
+
+  /* ── Decorative ornament ────────────────────────────────── */
+  .church-ornament {
+    @apply text-church-gold text-2xl text-center select-none leading-none;
+  }
+}
+
+/* ─── Utilities Layer ────────────────────────────────────── */
+@layer utilities {
+  .text-gradient-gold {
+    background: theme("backgroundImage.gold-gradient");
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-red {
+    background: theme("backgroundImage.red-gradient");
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .animate-shimmer {
+    background-size: 200% auto;
+    animation: shimmer 2.5s linear infinite;
+  }
+
+  .gold-shine {
+    background-image: theme("backgroundImage.gold-shimmer");
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
+  }
+
+  /* Scrollbar */
+  .church-scroll::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .church-scroll::-webkit-scrollbar-track {
+    @apply bg-church-bg;
+  }
+
+  .church-scroll::-webkit-scrollbar-thumb {
+    @apply bg-church-gold/60 rounded-full;
+  }
 }
