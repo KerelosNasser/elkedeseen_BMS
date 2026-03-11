@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import WeekScheduleGrid from "./WeekScheduleGrid";
-import { Users, CalendarDays, Maximize } from "lucide-react";
+import { Users, CalendarDays, Maximize, ChevronDown, ChevronUp } from "lucide-react";
 
 type BookingWithDetails = {
   id: string;
@@ -44,19 +44,19 @@ export default function VenueCard({ venue, bookings, weekStart }: VenueCardProps
   });
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="church-card-padded flex flex-col h-full">
-        <div className="flex items-start justify-between mb-4">
-          <h3 className="font-title text-2xl text-church-red">{venue.nameAr}</h3>
-          <div className="flex gap-2 flex-wrap justify-end">
+    <div className="flex flex-col gap-3">
+      <div className="church-card p-4 sm:p-5 flex flex-col h-full">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
+          <h3 className="font-title text-xl sm:text-2xl text-church-red leading-tight">{venue.nameAr}</h3>
+          <div className="flex gap-1.5 flex-wrap">
              {venue.capacity && (
-               <span className="badge bg-church-bg-warm text-church-text-muted flex items-center gap-1">
+               <span className="badge bg-church-bg-warm text-church-text-muted text-[10px] sm:text-xs py-0.5 px-2 flex items-center gap-1">
                  <Users className="w-3 h-3" />
                  {venue.capacity} فرد
                </span>
              )}
              {venue.isDouble && (
-               <span className="badge bg-church-gold-light/60 text-church-gold-dark border border-church-gold/30 flex items-center gap-1">
+               <span className="badge bg-church-gold-light/60 text-church-gold-dark border border-church-gold/30 text-[10px] sm:text-xs py-0.5 px-2 flex items-center gap-1">
                  <Maximize className="w-3 h-3" />
                  مزدوجة
                </span>
@@ -65,14 +65,14 @@ export default function VenueCard({ venue, bookings, weekStart }: VenueCardProps
         </div>
 
         {/* Mini week summary */}
-        <div className="mb-6 flex-1">
-          <p className="text-xs text-church-text-muted mb-2 font-body font-semibold">ارتباطات هذا الأسبوع:</p>
+        <div className="mb-4 flex-1">
+          <p className="text-[10px] text-church-text-muted mb-2 font-body font-semibold opacity-80">ارتباطات الأسبوع:</p>
           <div className="flex items-center gap-1 rtl:space-x-reverse" dir="rtl">
             {["أ", "إ", "ث", "أ", "خ", "ج", "س"].map((dayLabel, idx) => (
               <div 
                 key={idx} 
-                className={`flex-1 flex items-center justify-center text-[10px] font-bold rounded-sm h-6
-                  ${daysWithBookings[idx] ? 'bg-church-red/20 text-church-red border border-church-red/30' : 'bg-gray-100 text-gray-400 border border-gray-200'}
+                className={`flex-1 flex items-center justify-center text-[10px] font-bold rounded-[4px] h-7 sm:h-8
+                  ${daysWithBookings[idx] ? 'bg-church-red/20 text-church-red border border-church-red/30' : 'bg-gray-50 text-gray-400 border border-gray-100'}
                 `}
                 title={daysWithBookings[idx] ? 'يوجد حجوزات' : 'متاح'}
               >
@@ -84,16 +84,17 @@ export default function VenueCard({ venue, bookings, weekStart }: VenueCardProps
 
         <button 
           onClick={() => setExpanded(!expanded)}
-          className="church-button-outline w-full py-2.5 text-sm flex items-center justify-center gap-2 mt-auto"
+          className={`church-button-outline w-full py-2 text-sm flex items-center justify-center gap-2 mt-auto transition-all ${expanded ? 'bg-church-red text-white' : ''}`}
         >
           <CalendarDays className="w-4 h-4" />
-          {expanded ? "إخفاء الجدول" : "عرض الجدول الكامل"}
+          {expanded ? "إخفاء الجدول" : "عرض الجدول"}
+          {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
         </button>
       </div>
 
-      {/* Expanded Grid */}
+      {/* Expanded Grid Contained with max-height to prevent context loss */}
       {expanded && (
-        <div className="animate-fade-up w-full col-span-1 sm:col-span-2 lg:col-span-3">
+        <div className="animate-fade-up w-full h-[400px] sm:h-[550px] overflow-hidden rounded-lg border border-church-border/50 bg-white/50 p-1 shadow-inner">
            <WeekScheduleGrid bookings={bookings} weekStart={weekStart} isDouble={venue.isDouble} />
         </div>
       )}
