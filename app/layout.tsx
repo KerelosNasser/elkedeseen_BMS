@@ -7,7 +7,7 @@ const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"], variable: "--
 const cairo = Cairo({ subsets: ["arabic"], weight: ["300", "400", "500", "600", "700", "900"], variable: "--font-body" });
 
 export const metadata = {
-  title: "Antigravity | كنيسة القديسيين",
+  title: "كنيسة القديسيين",
   description: "نظام حجز القاعات",
 };
 
