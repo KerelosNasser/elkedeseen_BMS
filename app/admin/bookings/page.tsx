@@ -1,13 +1,11 @@
 import { requireAdmin } from "@/lib/auth-middleware";
 import { db } from "@/db";
 import { bookings, venues, users } from "@/db/schema";
-import { desc, eq, and, sql } from "drizzle-orm";
-import { format } from "date-fns";
-import { ar } from "date-fns/locale";
+import { desc, eq } from "drizzle-orm";
 import Link from "next/link";
 import { Calendar, Search, MapPin, Trash2, CheckCircle, XCircle } from "lucide-react";
-// Assuming we have a delete action, we can add it later or trigger via client
 import BookingsTableClient from "./BookingsTableClient";
+// Assuming we have a delete action, we can add it later or trigger via client
 
 export default async function AdminBookingsPage() {
   await requireAdmin();
