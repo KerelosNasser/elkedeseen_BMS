@@ -1,261 +1,104 @@
-# ✦ Church Booking Design System
+# ✦ Elkedeseen BMS: Spiritual Architecture meets Enterprise Engineering
 
-Coptic church aesthetic UI system for Next.js + TailwindCSS + TypeScript.
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-v0.45-C5F74F?style=for-the-badge&logo=drizzle)](https://orm.drizzle.team/)
+[![Neon Database](https://img.shields.io/badge/Neon_DB-Serverless_Postgres-00E599?style=for-the-badge&logo=neon)](https://neon.tech/)
 
-## Setup
+**Elkedeseen BMS** is a high-fidelity, RTL-first Booking Management System designed specifically for the unique needs of Coptic church communities. It marries centuries-old spiritual aesthetics with cutting-edge web technologies to provide a seamless, ornate, and powerful management experience.
 
-### 1. Install dependencies
+![Elkedeseen Hero Image](./church_bms_hero.png)
+
+---
+
+## ✨ The Vision
+
+We didn't just build a booking app; we built a digital cathedral. Every pixel is infused with a "Coptic Aesthetic" — deep liturgical reds, refined golden accents, and parchment-inspired backgrounds. It's a system that feels familiar to the spirit but powerful to the administrator.
+
+### 🏛️ 5 Core Pillars
+- **Venue Command**: Manage sacred spaces with capacity awareness and architectural mapping.
+- **Ornate Scheduling**: High-performance calendar systems supporting recurring spiritual services.
+- **Admin Consensus**: A multi-admin approval workflow for recurring events to ensure liturgical harmony.
+- **Smart Notifications**: Intelligent emailing system that mimics personal outreach while staying automated.
+- **RTL-First Precision**: Built from the ground up for Arabic, ensuring perfect typography and layout flow.
+
+---
+
+## 🛠️ The Tech Stack
+
+Built for scale, speed, and standardizing the "Vibe Coding" paradigm.
+
+- **Framework**: [Next.js 16](https://next.js.org) (App Router, Server Actions, Turbopack)
+- **Database**: [Neon DB](https://neon.tech) (Serverless Postgres) with [Drizzle ORM](https://orm.drizzle.team)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com) (Modern, high-performance styling)
+- **Animations**: [GSAP](https://gsap.com) (Fluid transitions and scroll-triggered elegance)
+- **Messaging**: [Nodemailer](https://nodemailer.com) (Customized with dynamic sender identities)
+- **Validation**: [Zod](https://zod.dev) (Strict schema enforcement)
+
+---
+
+## 🎨 Design System: "Sacred Aesthetic"
+
+Our design system is baked into the DNA of the project. We use a curated palette and custom tokens to maintain visual divinity:
+
+| Token | Value | Purpose |
+| :--- | :--- | :--- |
+| **Church Red** | `#9B1C1F` | Dignity, headings, primary actions |
+| **Church Gold** | `#D4AF37` | Radiance, borders, ornaments |
+| **Church BG** | `#F5EFE4` | Serenity, page backgrounds |
+| **Ornate Divider** | Ornate ✦ | Sacred separation of content |
+
+---
+
+## 🚀 Getting Started
+
+Ensure you have the digital keys before entering the sanctuary.
+
+### 1. Environment Secrets
+
+Create a `.env.local` file with the following:
+
+```env
+DATABASE_URL=your_postgres_url
+SESSION_SECRET=your_long_random_string
+ADMIN_EMAILS=admin1@example.com,admin2@example.com
+
+# SMTP (Optional)
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USER=user@example.com
+SMTP_PASS=pass
+SMTP_FROM="System" <noreply@example.com>
+```
+
+### 2. Ritual Installation
 
 ```bash
-npm install clsx tailwind-merge
+pnpm install
+pnpm dev
 ```
 
-### 2. Copy files into your project
-
-```
-tailwind.config.ts       → root
-styles/globals.css       → app/globals.css or styles/globals.css
-lib/tokens.ts            → lib/tokens.ts
-lib/utils.ts             → lib/utils.ts
-components/ui/           → components/ui/
-components/booking/      → components/booking/
-components/admin/        → components/admin/
-```
-
-### 3. Import global styles in layout
-
-```tsx
-// app/layout.tsx
-import "@/styles/globals.css";
-```
-
-### 4. Add Google Fonts to `<head>` (or use `next/font`)
-
-```tsx
-// app/layout.tsx
-import { Aref_Ruqaa, Amiri, Cairo } from "next/font/google";
-
-const arefRuqaa = Aref_Ruqaa({ weight: ["400", "700"], subsets: ["arabic"] });
-const amiri = Amiri({ weight: ["400", "700"], subsets: ["arabic"] });
-const cairo = Cairo({ subsets: ["arabic", "latin"] });
-```
+The sanctuary will be available at `http://localhost:3000`.
 
 ---
 
-## Design Tokens
+## 🔥 Features that Stand Out
 
-| Token | Value | Use |
-|-------|-------|-----|
-| `church-red` | `#9B1C1F` | Primary brand, headings, buttons |
-| `church-gold` | `#D4AF37` | Accents, dividers, borders |
-| `church-gold-light` | `#E8D7A5` | Soft highlights, backgrounds |
-| `church-bg` | `#F5EFE4` | Page background |
-| `church-text` | `#2A2A2A` | Body text |
-| Font: title | Aref Ruqaa | Arabic headings |
-| Font: subtitle | Amiri | Subheadings, quotes |
-| Font: body | Cairo | All body text, UI labels |
+### 📧 The Smart Emailer
+Our notification system doesn't feel like a bot. It uses the **Identity** of the admin who makes a booking to send the email, setting the `from` display name and `reply-to` headers automatically. This ensures that when an admin receives a notification, they can simply hit "Reply" to talk to the booker.
+
+### 🗓️ Recurring Logic
+Handles complex recurring patterns with mandatory admin consensus. It tracks every vote and only activates the booking when the council of admins agrees.
 
 ---
 
-## Utility Classes
+## 🤝 Contribution
 
-### Layout
-```html
-<div class="church-container">     <!-- max-w-6xl centered with padding -->
-<section class="church-section">   <!-- vertical section padding -->
-<div class="church-background">    <!-- full page warm gradient bg -->
-```
-
-### Borders & Shadows
-```html
-<div class="gold-border">          <!-- subtle gold border -->
-<div class="gold-border-strong">   <!-- prominent gold border + glow -->
-<div class="soft-shadow">          <!-- warm brown shadow -->
-<div class="soft-shadow-md">       <!-- medium shadow -->
-<div class="soft-shadow-lg">       <!-- large shadow -->
-```
-
-### Cards
-```html
-<div class="church-card">          <!-- base card -->
-<div class="church-card-padded">   <!-- card + padding -->
-```
-
-### Typography
-```html
-<h1 class="section-title">        <!-- Arabic title, church-red -->
-<h2 class="section-title-en">     <!-- English title, church-red -->
-<p class="section-subtitle">      <!-- Amiri subtitle, muted -->
-```
-
-### Dividers
-```html
-<div class="gold-divider">                <!-- ornate with cross icon -->
-<div class="gold-divider-simple">         <!-- simple gradient line -->
-<div class="gold-divider variant=thick">  <!-- thick gold bar -->
-```
-
-### Buttons
-```html
-<button class="church-button church-button-primary">  <!-- red gradient -->
-<button class="church-button church-button-gold">     <!-- gold gradient -->
-<button class="church-button church-button-outline">  <!-- red outline -->
-<button class="church-button church-button-ghost">    <!-- ghost -->
-```
-
-### Booking Slots
-```html
-<button class="booking-slot booking-slot-available">
-<button class="booking-slot booking-slot-selected">
-<button class="booking-slot booking-slot-booked">
-<button class="booking-slot booking-slot-gold">
-```
-
-### Calendar
-```html
-<div class="calendar-day calendar-day-default">
-<div class="calendar-day calendar-day-selected">
-<div class="calendar-day calendar-day-today">
-<div class="calendar-day calendar-day-disabled">
-<div class="calendar-day calendar-day-has-slots">   <!-- gold dot indicator -->
-```
-
-### Form
-```html
-<input class="form-input">
-<input class="form-input-error">
-<label class="form-label">
-<p class="form-error">
-<p class="form-hint">
-```
-
-### Admin Table
-```html
-<table class="admin-table">
-```
-
-### Badges
-```html
-<span class="badge badge-confirmed">
-<span class="badge badge-pending">
-<span class="badge badge-cancelled">
-```
+This project is a labor of love for the community. If you have ideas to enhance the digital sanctuary, feel free to open a PR.
 
 ---
 
-## React Components
-
-### Button
-```tsx
-import { Button } from "@/components/ui/Button";
-
-<Button variant="primary" size="md" loading={false}>حجز موعد</Button>
-<Button variant="gold" iconLeft={<Icon />}>تأكيد</Button>
-<Button variant="outline">إلغاء</Button>
-```
-
-**Props:** `variant?: "primary" | "gold" | "outline" | "ghost"` | `size?: "sm" | "md" | "lg"` | `loading?: boolean` | `iconLeft / iconRight: ReactNode`
-
----
-
-### Card
-```tsx
-import Card, { CardHeader, CardBody, CardFooter } from "@/components/ui/Card";
-
-<Card variant="elevated" padded>
-  <CardHeader ornament="✦">
-    <h3>عنوان البطاقة</h3>
-  </CardHeader>
-  <CardBody>محتوى</CardBody>
-  <CardFooter><Button>إجراء</Button></CardFooter>
-</Card>
-```
-
-**Props:** `variant?: "default" | "elevated" | "outlined"` | `padded?: boolean`
-
----
-
-### BookingSlot
-```tsx
-import BookingSlot from "@/components/booking/BookingSlot";
-
-<BookingSlot
-  time="10:00"
-  period="AM"
-  label="الضحى"
-  status="available"     // "available" | "selected" | "booked" | "gold"
-  capacity={20}
-  booked={5}
-  onClick={() => selectSlot(id)}
-/>
-```
-
----
-
-### CalendarGrid
-```tsx
-import { CalendarGrid } from "@/components/booking/Calendar";
-
-<CalendarGrid
-  month={new Date()}
-  selectedDate={selectedDate}
-  availableDates={availableDates}
-  onSelectDate={(d) => setSelected(d)}
-  minDate={new Date()}
-/>
-```
-
----
-
-### DatePicker
-```tsx
-import { DatePicker } from "@/components/booking/Calendar";
-
-<DatePicker
-  value={date}
-  onChange={setDate}
-  availableDates={myDates}
-  placeholder="اختر تاريخاً"
-/>
-```
-
----
-
-### BookingForm
-```tsx
-import BookingForm from "@/components/booking/BookingForm";
-
-<BookingForm
-  slots={mySlots}
-  serviceTypes={["القداس", "الاجتماع"]}
-  availableDates={myDates}
-  onSubmit={async (data) => {
-    await createBooking(data);
-  }}
-/>
-```
-
----
-
-### AdminBookingTable
-```tsx
-import AdminBookingTable from "@/components/admin/AdminBookingTable";
-
-<AdminBookingTable
-  bookings={bookings}
-  onStatusChange={(id, status) => updateStatus(id, status)}
-  onDelete={(id) => deleteBooking(id)}
-/>
-```
-
----
-
-## RTL Support
-
-All components use `dir="rtl"` internally for Arabic text. The design system is RTL-first.
-Add `dir="rtl"` to your `<html>` tag for full page RTL:
-
-```tsx
-// app/layout.tsx
-<html lang="ar" dir="rtl">
-```
+<p align="center">
+  Built with ❤️ for the Elkedeseen Community. <br/>
+  <i>"Architecture is the art of how to waste space." — Except in our UI.</i>
+</p>
