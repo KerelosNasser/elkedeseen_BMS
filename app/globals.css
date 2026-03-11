@@ -1,8 +1,96 @@
-@import url("https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Cairo:wght@300;400;500;600;700;900&display=swap");
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@config "../tailwind.config.ts";
+
+@theme {
+  --font-title: "Aref Ruqaa", "Georgia", "serif";
+  --font-subtitle: "Amiri", "Georgia", "serif";
+  --font-body: "Cairo", "sans-serif";
+
+  --color-church-red: #9b1c1f;
+  --color-church-red-dark: #7a1518;
+  --color-church-red-light: #c0282c;
+  --color-church-gold: #d4af37;
+  --color-church-gold-light: #e8d7a5;
+  --color-church-gold-dark: #b8952e;
+  --color-church-gold-muted: #c9b96a;
+  --color-church-bg: #f5efe4;
+  --color-church-bg-warm: #ede4d3;
+  --color-church-bg-card: #faf6ef;
+  --color-church-text: #2a2a2a;
+  --color-church-text-muted: #6b5e4e;
+  --color-church-text-light: #9c8e7e;
+  --color-church-border: #d9c9a8;
+  --color-church-border-light: #ede0c4;
+
+  --background-image-church-gradient: linear-gradient(160deg, #f5efe4 0%, #ede4d3 50%, #e8d7c0 100%);
+  --background-image-church-gradient-radial: radial-gradient(ellipse at 60% 20%, #f0e6d2 0%, #e8d7c0 60%, #ddd0b8 100%);
+  --background-image-gold-gradient: linear-gradient(135deg, #d4af37 0%, #e8d7a5 50%, #d4af37 100%);
+  --background-image-gold-shimmer: linear-gradient(90deg, transparent 0%, rgba(212, 175, 55, 0.4) 50%, transparent 100%);
+  --background-image-red-gradient: linear-gradient(135deg, #9b1c1f 0%, #c0282c 100%);
+  --background-image-card-gradient: linear-gradient(160deg, #faf6ef 0%, #f2ead8 100%);
+  --background-image-header-gradient: linear-gradient(180deg, rgba(155, 28, 31, 0.97) 0%, rgba(122, 21, 24, 1) 100%);
+
+  --shadow-church: 0 4px 24px rgba(42, 26, 10, 0.10), 0 1px 4px rgba(42, 26, 10, 0.06);
+  --shadow-church-md: 0 8px 40px rgba(42, 26, 10, 0.13), 0 2px 8px rgba(42, 26, 10, 0.07);
+  --shadow-church-lg: 0 16px 64px rgba(42, 26, 10, 0.18), 0 4px 16px rgba(42, 26, 10, 0.08);
+  --shadow-gold: 0 0 0 2px #d4af37, 0 4px 20px rgba(212, 175, 55, 0.25);
+  --shadow-gold-inset: inset 0 1px 0 rgba(212, 175, 55, 0.4);
+  --shadow-slot: 0 2px 12px rgba(42, 26, 10, 0.08);
+  --shadow-slot-hover: 0 6px 24px rgba(155, 28, 31, 0.15);
+
+  --radius-card: 1rem;
+  --radius-card-lg: 1.5rem;
+  --radius-slot: 0.625rem;
+  --radius-pill: 9999px;
+
+  --spacing-section: 5rem;
+  --spacing-section-sm: 3rem;
+  --spacing-container: 1.5rem;
+}
+
+/* ─── Custom Utilities ───────────────────────────────────── */
+@utility gold-border {
+  @apply border border-church-gold/60;
+  box-shadow: inset 0 1px 0 rgba(212, 175, 55, 0.3);
+}
+
+@utility gold-border-strong {
+  @apply border-2 border-church-gold;
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.15),
+    inset 0 1px 0 rgba(232, 215, 165, 0.6);
+}
+
+@utility soft-shadow {
+  box-shadow: var(--shadow-church);
+}
+
+@utility soft-shadow-md {
+  box-shadow: var(--shadow-church-md);
+}
+
+@utility soft-shadow-lg {
+  box-shadow: var(--shadow-church-lg);
+}
+
+@utility church-card {
+  @apply rounded-card bg-church-bg-card gold-border soft-shadow;
+  @apply transition-all duration-300;
+  background-image: var(--background-image-card-gradient);
+}
+
+@utility church-button {
+  @apply inline-flex items-center justify-center gap-2;
+  @apply font-body font-semibold text-sm sm:text-base;
+  @apply px-6 py-3 rounded-pill;
+  @apply transition-all duration-200 cursor-pointer;
+  @apply select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-church-gold;
+}
+
+@utility badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-pill text-xs font-semibold font-body;
+}
 
 /* ─── Base Layer ─────────────────────────────────────────── */
 @layer base {
@@ -21,13 +109,17 @@
   }
 
   body {
-    @apply bg-church-bg text-church-text font-body antialiased;
-    background-image: theme("backgroundImage.church-gradient");
+    background-color: var(--color-church-bg);
+    color: var(--color-church-text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-image: var(--background-image-church-gradient);
     min-height: 100vh;
   }
 
   * {
-    @apply border-church-border;
+    border-color: var(--color-church-border);
   }
 
   /* RTL support for Arabic */
@@ -40,7 +132,6 @@
 
 /* ─── Components Layer ───────────────────────────────────── */
 @layer components {
-
   /* Layout utilities */
   .church-container {
     @apply w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
@@ -51,48 +142,25 @@
   }
 
   .church-background {
-    background-image: theme("backgroundImage.church-gradient-radial");
+    background-image: var(--background-image-church-gradient-radial);
     @apply min-h-screen;
-  }
-
-  /* Gold border */
-  .gold-border {
-    @apply border border-church-gold/60;
-    box-shadow: inset 0 1px 0 rgba(212, 175, 55, 0.3);
-  }
-
-  .gold-border-strong {
-    @apply border-2 border-church-gold;
-    box-shadow:
-      0 0 0 1px rgba(212, 175, 55, 0.15),
-      inset 0 1px 0 rgba(232, 215, 165, 0.6);
-  }
-
-  /* Shadow utilities */
-  .soft-shadow {
-    box-shadow: theme("boxShadow.church");
-  }
-
-  .soft-shadow-md {
-    box-shadow: theme("boxShadow.church-md");
-  }
-
-  .soft-shadow-lg {
-    box-shadow: theme("boxShadow.church-lg");
   }
 
   /* ── Section Title ──────────────────────────────────────── */
   .section-title {
-    @apply font-title text-h1-ar text-church-red text-center leading-tight;
+    font-family: var(--font-title);
+    font-size: 3rem;
+    color: var(--color-church-red);
+    text-align: center;
+    line-height: 1.25;
     direction: rtl;
   }
 
-  .section-title-en {
-    @apply font-title text-h1-ar text-church-red text-center leading-tight;
-  }
-
   .section-subtitle {
-    @apply font-subtitle text-h3-ar text-church-text-muted text-center;
+    font-family: var(--font-subtitle);
+    font-size: 1.5rem;
+    color: var(--color-church-text-muted);
+    text-align: center;
     direction: rtl;
   }
 
@@ -116,40 +184,24 @@
     background: linear-gradient(90deg, transparent, #d4af37 30%, #e8d7a5 50%, #d4af37 70%, transparent);
   }
 
-  /* ── Church Card ────────────────────────────────────────── */
-  .church-card {
-    @apply rounded-card bg-church-bg-card gold-border soft-shadow;
-    @apply transition-all duration-300;
-    background-image: theme("backgroundImage.card-gradient");
-  }
-
   .church-card:hover {
-    box-shadow: theme("boxShadow.church-md");
-    @apply -translate-y-0.5;
+    box-shadow: var(--shadow-church-md);
+    @apply -translate-y-px;
   }
 
   .church-card-padded {
     @apply church-card p-6 sm:p-8;
   }
 
-  /* ── Church Button ──────────────────────────────────────── */
-  .church-button {
-    @apply inline-flex items-center justify-center gap-2;
-    @apply font-body font-semibold text-sm sm:text-base;
-    @apply px-6 py-3 rounded-pill;
-    @apply transition-all duration-200 cursor-pointer;
-    @apply select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-church-gold;
-  }
-
   .church-button-primary {
     @apply church-button text-white;
-    background-image: theme("backgroundImage.red-gradient");
-    box-shadow: 0 4px 16px rgba(155, 28, 31, 0.3), theme("boxShadow.gold-inset");
+    background-image: var(--background-image-red-gradient);
+    box-shadow: 0 4px 16px rgba(155, 28, 31, 0.3), var(--shadow-gold-inset);
   }
 
   .church-button-primary:hover {
     @apply brightness-110;
-    box-shadow: 0 6px 24px rgba(155, 28, 31, 0.4), theme("boxShadow.gold-inset");
+    box-shadow: 0 6px 24px rgba(155, 28, 31, 0.4), var(--shadow-gold-inset);
     @apply -translate-y-px;
   }
 
@@ -159,7 +211,7 @@
 
   .church-button-gold {
     @apply church-button text-church-text;
-    background-image: theme("backgroundImage.gold-gradient");
+    background-image: var(--background-image-gold-gradient);
     box-shadow: 0 4px 16px rgba(212, 175, 55, 0.3);
   }
 
@@ -175,151 +227,6 @@
 
   .church-button-outline:hover {
     @apply bg-church-red text-white border-church-red;
-  }
-
-  .church-button-ghost {
-    @apply church-button bg-transparent text-church-text-muted;
-    @apply hover:bg-church-bg-warm hover:text-church-text;
-  }
-
-  /* ── Booking Slot ───────────────────────────────────────── */
-  .booking-slot {
-    @apply rounded-slot border font-body text-sm font-medium;
-    @apply flex flex-col items-center justify-center gap-0.5;
-    @apply p-3 cursor-pointer transition-all duration-200;
-    @apply select-none focus-visible:outline-none;
-  }
-
-  .booking-slot-available {
-    @apply booking-slot bg-church-bg-card border-church-border text-church-text;
-    box-shadow: theme("boxShadow.slot");
-  }
-
-  .booking-slot-available:hover {
-    @apply border-church-gold bg-church-gold-light/30 text-church-text;
-    box-shadow: theme("boxShadow.slot-hover");
-    @apply -translate-y-px;
-  }
-
-  .booking-slot-selected {
-    @apply booking-slot text-white;
-    background-image: theme("backgroundImage.red-gradient");
-    @apply border-church-red;
-    box-shadow: 0 4px 16px rgba(155, 28, 31, 0.3);
-  }
-
-  .booking-slot-booked {
-    @apply booking-slot bg-church-bg text-church-text-light;
-    @apply border-church-border-light cursor-not-allowed opacity-60;
-  }
-
-  .booking-slot-gold {
-    @apply booking-slot bg-church-gold-light/40 border-church-gold text-church-text;
-    box-shadow: theme("boxShadow.gold");
-  }
-
-  /* ── Calendar Day ───────────────────────────────────────── */
-  .calendar-day {
-    @apply aspect-square flex items-center justify-center rounded-lg;
-    @apply font-body text-sm font-medium cursor-pointer;
-    @apply transition-all duration-150 select-none;
-  }
-
-  .calendar-day-default {
-    @apply calendar-day text-church-text hover:bg-church-gold-light/40 hover:text-church-text;
-  }
-
-  .calendar-day-selected {
-    @apply calendar-day text-white;
-    background-image: theme("backgroundImage.red-gradient");
-    box-shadow: 0 2px 8px rgba(155, 28, 31, 0.35);
-  }
-
-  .calendar-day-today {
-    @apply calendar-day bg-church-gold-light/50 text-church-text;
-    @apply ring-1 ring-church-gold/60;
-  }
-
-  .calendar-day-disabled {
-    @apply calendar-day text-church-text-light opacity-40 cursor-not-allowed;
-  }
-
-  .calendar-day-has-slots {
-    @apply calendar-day-default relative;
-  }
-
-  .calendar-day-has-slots::after {
-    content: "";
-    @apply absolute bottom-1 left-1/2 -translate-x-1/2;
-    @apply w-1 h-1 rounded-full bg-church-gold;
-  }
-
-  /* ── Form Input ─────────────────────────────────────────── */
-  .form-input {
-    @apply w-full font-body text-base text-church-text;
-    @apply bg-church-bg-card rounded-slot px-4 py-3;
-    @apply border border-church-border;
-    @apply transition-all duration-200 outline-none;
-    @apply placeholder:text-church-text-light;
-  }
-
-  .form-input:focus {
-    @apply border-church-gold ring-2 ring-church-gold/20;
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
-  }
-
-  .form-input:disabled {
-    @apply opacity-60 cursor-not-allowed bg-church-bg;
-  }
-
-  .form-input-error {
-    @apply form-input border-church-red ring-2 ring-church-red/20;
-  }
-
-  .form-label {
-    @apply block font-body font-semibold text-sm text-church-text mb-1.5;
-  }
-
-  .form-error {
-    @apply font-body text-xs text-church-red mt-1.5;
-  }
-
-  .form-hint {
-    @apply font-body text-xs text-church-text-muted mt-1.5;
-  }
-
-  /* ── Admin Table ────────────────────────────────────────── */
-  .admin-table {
-    @apply w-full font-body text-sm border-collapse;
-  }
-
-  .admin-table thead {
-    @apply bg-church-red text-white;
-  }
-
-  .admin-table th {
-    @apply px-4 py-3 text-left font-semibold text-xs uppercase tracking-wide;
-  }
-
-  .admin-table td {
-    @apply px-4 py-3 border-b border-church-border-light text-church-text;
-  }
-
-  .admin-table tbody tr {
-    @apply bg-church-bg-card transition-colors duration-150;
-  }
-
-  .admin-table tbody tr:hover {
-    @apply bg-church-gold-light/20;
-  }
-
-  .admin-table tbody tr:nth-child(even) {
-    @apply bg-church-bg;
-  }
-
-  /* ── Status Badges ──────────────────────────────────────── */
-  .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-pill text-xs font-semibold font-body;
   }
 
   .badge-confirmed {
@@ -343,28 +250,17 @@
 /* ─── Utilities Layer ────────────────────────────────────── */
 @layer utilities {
   .text-gradient-gold {
-    background: theme("backgroundImage.gold-gradient");
+    background-image: var(--background-image-gold-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .text-gradient-red {
-    background: theme("backgroundImage.red-gradient");
+    background-image: var(--background-image-red-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-  }
-
-  .animate-shimmer {
-    background-size: 200% auto;
-    animation: shimmer 2.5s linear infinite;
-  }
-
-  .gold-shine {
-    background-image: theme("backgroundImage.gold-shimmer");
-    background-size: 200% 100%;
-    animation: shimmer 3s linear infinite;
   }
 
   /* Scrollbar */

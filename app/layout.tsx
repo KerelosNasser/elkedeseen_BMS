@@ -1,30 +1,31 @@
-import { Geist, Geist_Mono, Inter } from "next/font/google"
-
-import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import { Aref_Ruqaa, Amiri, Cairo } from "next/font/google";
+import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'})
+const aref = Aref_Ruqaa({ subsets: ["arabic"], weight: ["400", "700"], variable: "--font-title" });
+const amiri = Amiri({ subsets: ["arabic"], weight: ["400", "700"], variable: "--font-subtitle" });
+const cairo = Cairo({ subsets: ["arabic"], weight: ["300", "400", "500", "600", "700", "900"], variable: "--font-body" });
 
-const fontMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-})
+export const metadata = {
+  title: "Antigravity | كنيسة القديسيين",
+  description: "نظام حجز القاعات",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html
-      lang="en"
+      lang="ar"
+      dir="rtl"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
+      className={cn("antialiased", aref.variable, amiri.variable, cairo.variable)}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        {children}
       </body>
     </html>
-  )
+  );
 }

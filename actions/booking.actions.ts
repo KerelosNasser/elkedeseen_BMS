@@ -1,0 +1,202 @@
+"use server";
+
+import { db } from "@/db";
+import { bookings, users, bookingAttendees, venues, recurringApprovals } from "@/db/schema";
+import { and, eq, gte, lte, or, sql } from "drizzle-orm";
+import { endOfWeek, startOfWeek } from "date-fns";
+
+export type BookingWithVenueAndBooker = typeof bookings.$inferSelect & {
+  venue: typeof venues.$inferSelect;
+  booker: {
+    id: string;
+    name: string;
+    role: string;
+  };
+};
+
+export async function getBookingsForUser(userId: string): Promise<BookingWithVenueAndBooker[]> {
+  const now = new Date();
+  
+  // We need bookings where user is bookedBy
+  // OR user is in booking_attendees for that booking
+  // Note: For Drizzle without complex subqueries easily, we can just do two queries and merge, 
+  // or use left joins carefully. 
+  
+  // 1. Fetch where user is the booker
+  const bookedByMe = await db
+    .select({
+      booking: bookings,
+      venue: venues,
+      booker: { id: users.id, name: users.name, role: users.role },
+    })
+    .from(bookings)
+    .innerJoin(venues, eq(bookings.venueId, venues.id))
+    .innerJoin(users, eq(bookings.bookedBy, users.id))
+    .where(
+      and(
+        eq(bookings.bookedBy, userId),
+        gte(bookings.expiresAt, now),
+        or(eq(bookings.status, "active"), eq(bookings.status, "pending_approval"))
+      )
+    );
+
+  // 2. Fetch where user is an attendee
+  const attending = await db
+    .select({
+      booking: bookings,
+      venue: venues,
+      booker: { id: users.id, name: users.name, role: users.role },
+    })
+    .from(bookingAttendees)
+    .innerJoin(bookings, eq(bookingAttendees.bookingId, bookings.id))
+    .innerJoin(venues, eq(bookings.venueId, venues.id))
+    .innerJoin(users, eq(bookings.bookedBy, users.id))
+    .where(
+      and(
+        eq(bookingAttendees.userId, userId),
+        gte(bookings.expiresAt, now),
+        or(eq(bookings.status, "active"), eq(bookings.status, "pending_approval"))
+      )
+    );
+
+  // Merge and deduplicate
+  const allBookingsMap = new Map<string, BookingWithVenueAndBooker>();
+  
+  const processResult = (arr: any[]) => {
+    arr.forEach(r => {
+      allBookingsMap.set(r.booking.id, {
+        ...r.booking,
+        venue: r.venue,
+        booker: r.booker
+      });
+    });
+  };
+
+  processResult(bookedByMe);
+  processResult(attending);
+
+  return Array.from(allBookingsMap.values());
+}
+
+export type UserSearchResult = {
+  id: string;
+  name: string;
+  role: string;
+};
+
+export async function searchAttendees(query: string): Promise<UserSearchResult[]> {
+  if (!query || query.length < 2) return [];
+
+  const results = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      role: users.role,
+    })
+    .from(users)
+    .where(or(
+      // basic ILIKE search, Drizzle 'ilike' might be needed depending on DB, but 'like' with % works too
+      // Neon/Postgres supports ILIKE
+      sql`${users.name} ILIKE ${'%' + query + '%'}`,
+      sql`${users.email} ILIKE ${'%' + query + '%'}`
+    ))
+    .limit(10);
+
+  return results;
+}
+
+export async function checkConflict(venueId: string, _weekDate: string, dayOfWeek: number, startTime: string, endTime: string): Promise<boolean> {
+  const conflicting = await db
+    .select()
+    .from(bookings)
+    .where(
+      and(
+        eq(bookings.venueId, venueId),
+        eq(bookings.dayOfWeek, dayOfWeek),
+        or(eq(bookings.status, "active"), eq(bookings.status, "pending_approval")),
+        sql`${bookings.startTime} < ${endTime}`,
+        sql`${bookings.endTime} > ${startTime}`,
+        or(
+          eq(bookings.isRecurring, true),
+          eq(bookings.weekDate, _weekDate)
+        )
+      )
+    )
+    .limit(1);
+
+  return conflicting.length > 0;
+}
+
+export async function createBooking(data: any) {
+  try {
+    const { venueId, title, weekDate, dayOfWeek, startTime, endTime, isRecurring, expiresAt, bookedBy, attendeeIds } = data;
+
+    const hasConflict = await checkConflict(venueId, weekDate, dayOfWeek, startTime, endTime);
+    if (hasConflict) {
+      return { success: false, error: "يوجد تعارض في هذه القاعة بهذا الموعد!" };
+    }
+
+    const status = isRecurring ? "pending_approval" : "active";
+
+    const [newBooking] = await db.insert(bookings).values({
+      venueId,
+      title,
+      weekDate,
+      dayOfWeek,
+      startTime,
+      endTime,
+      isRecurring,
+      expiresAt: new Date(expiresAt),
+      bookedBy,
+      status
+    }).returning();
+
+    if (attendeeIds && attendeeIds.length > 0) {
+      const attendeesData = attendeeIds.map((userId: string) => ({
+        bookingId: newBooking.id,
+        userId
+      }));
+      await db.insert(bookingAttendees).values(attendeesData);
+    }
+
+    if (isRecurring) {
+      const allAdmins = await db.select({ id: users.id }).from(users).where(eq(users.role, "admin"));
+      const otherAdmins = allAdmins.filter(a => a.id !== bookedBy);
+      
+      if (otherAdmins.length > 0) {
+        const approvalsData = otherAdmins.map(admin => ({
+          bookingId: newBooking.id,
+          adminId: admin.id,
+          approved: false
+        }));
+        await db.insert(recurringApprovals).values(approvalsData);
+      } else {
+        await db.update(bookings).set({ status: "active" }).where(eq(bookings.id, newBooking.id));
+      }
+    }
+
+    return { success: true, bookingId: newBooking.id };
+  } catch (error) {
+    console.error("Failed to create booking", error);
+    return { success: false, error: "حدث خطأ أثناء حفظ الحجز" };
+  }
+}
+
+export async function deleteBooking(bookingId: string) {
+  try {
+    // Delete Attendees First (Cascading could be set in schema, but doing it manually is safe)
+    await db.delete(bookingAttendees).where(eq(bookingAttendees.bookingId, bookingId));
+    
+    // Delete Approvals
+    await db.delete(recurringApprovals).where(eq(recurringApprovals.bookingId, bookingId));
+
+    // Delete Booking
+    await db.delete(bookings).where(eq(bookings.id, bookingId));
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete booking:", error);
+    return { success: false, error: "حدث خطأ أثناء حذف الحجز" };
+  }
+}
+
