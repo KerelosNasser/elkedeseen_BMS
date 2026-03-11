@@ -2,8 +2,11 @@
 
 import { db } from "@/db";
 import { bookings, users, bookingAttendees, venues, recurringApprovals } from "@/db/schema";
-import { and, eq, gte, lte, or, sql } from "drizzle-orm";
+import { and, eq, gte, lte, or, sql, inArray } from "drizzle-orm";
 import { endOfWeek, startOfWeek } from "date-fns";
+import { sendBookingNotification, sendApprovalRequestNotification } from "@/lib/mail";
+
+const daysAr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
 
 export type BookingWithVenueAndBooker = typeof bookings.$inferSelect & {
   venue: typeof venues.$inferSelect;
@@ -173,6 +176,59 @@ export async function createBooking(data: any) {
       } else {
         await db.update(bookings).set({ status: "active" }).where(eq(bookings.id, newBooking.id));
       }
+    }
+
+    // --- Email Notifications ---
+    try {
+      const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(e => e.trim()) || [];
+      
+      if (adminEmails.length > 0) {
+        const venue = await db.query.venues.findFirst({ where: eq(venues.id, venueId) });
+        const booker = await db.query.users.findFirst({ where: eq(users.id, bookedBy) });
+        
+        if (venue && booker) {
+          const allAdmins = await db.select().from(users).where(eq(users.role, "admin"));
+          const adminEmailsFromDb = allAdmins.map(a => a.email);
+          
+          // Use config emails as fallback or addition
+          const combinedEmails = Array.from(new Set([...adminEmailsFromDb, ...adminEmails]));
+
+          if (combinedEmails.length > 0) {
+            if (!isRecurring) {
+              // Notify all admins about normal booking
+              await sendBookingNotification({
+                venueName: venue.nameAr,
+                bookerName: booker.name,
+                bookerEmail: booker.email,
+                date: weekDate,
+                startTime,
+                endTime,
+                adminEmails: combinedEmails
+              });
+            } else {
+              // Notify other admins (excluding the booker) about approval request
+              const otherAdminsEmails = allAdmins
+                .filter(a => a.id !== bookedBy)
+                .map(a => a.email);
+
+              if (otherAdminsEmails.length > 0) {
+                await sendApprovalRequestNotification({
+                  venueName: venue.nameAr,
+                  bookerName: booker.name,
+                  bookerEmail: booker.email,
+                  dayOfWeek: daysAr[dayOfWeek],
+                  startTime,
+                  endTime,
+                  adminEmails: otherAdminsEmails
+                });
+              }
+            }
+          }
+        }
+      }
+    } catch (mailError) {
+      console.error("Failed to trigger email notifications:", mailError);
+      // Don't fail the booking if email fails
     }
 
     return { success: true, bookingId: newBooking.id };
