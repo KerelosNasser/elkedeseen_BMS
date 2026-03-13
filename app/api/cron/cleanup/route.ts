@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     if (expiredBookings.length > 0) {
       const expiredIds = expiredBookings.map((b) => b.id);
 
-      // Delete in batch using inArray (much faster and fewer "Rows Written" in Turso)
+      // Delete in batch using inArray (much faster and efficient in PostgreSQL)
       await db.delete(bookingAttendees).where(inArray(bookingAttendees.bookingId, expiredIds));
       await db.delete(recurringApprovals).where(inArray(recurringApprovals.bookingId, expiredIds));
       await db.delete(bookings).where(inArray(bookings.id, expiredIds));

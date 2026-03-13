@@ -1,18 +1,15 @@
-import { drizzle } from "drizzle-orm/libsql";
-import { createClient } from "@libsql/client";
-import * as schema from "./schema";
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from './schema';
 
-const url = process.env.TURSO_CONNECTION_URL;
-const authToken = process.env.TURSO_AUTH_TOKEN;
+const connectionString = process.env.DATABASE_URL;
 
-if (!url) {
-  throw new Error("TURSO_CONNECTION_URL environment variable is missing. Check your .env.local file.");
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is missing.');
 }
 
-const client = createClient({
-  url,
-  authToken,
-});
+// Disable prefetch as it is not supported for "Transaction" pool mode
+const client = postgres(connectionString, { prepare: false });
 
 export const db = drizzle(client, { schema });
-export * from "./schema";
+export * from './schema';

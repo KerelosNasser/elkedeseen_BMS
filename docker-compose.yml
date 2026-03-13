@@ -1,0 +1,18 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: elkedeseen-bms
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      # The admin changes these values here:
+      - DATABASE_URL=${DATABASE_URL}
+      - ADMIN_EMAILS=${ADMIN_EMAILS}
+      - CRON_SECRET=${CRON_SECRET}
+      - NODE_ENV=production
+    # Or they can put them in a .env file next to this one
+    env_file:
+      - .env.production

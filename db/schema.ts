@@ -1,22 +1,22 @@
-import { sqliteTable, text, integer, unique, index } from 'drizzle-orm/sqlite-core';
+import { pgTable, text, integer, boolean, timestamp, uniqueIndex, index, unique } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
-// Helper for shorter, URL-safe IDs (12 chars is plenty for < 1k users)
+// Helper for shorter, URL-safe IDs
 const generateId = () => Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8);
 
-// Enums
+// Enums (Postgres supports native enums, but keeping them as text with check constraints or just text for simplicity/consistency with existing logic)
 export const roles = ['admin', 'user'] as const;
 export const sections = ['ground_floor', 'second_floor', 'education_building', 'other', 'dev_center'] as const;
 export const statuses = ['active', 'pending_approval', 'rejected'] as const;
 
 // ── USERS ─────────────────────────────────────────────────────
-export const users = sqliteTable('users', {
+export const users = pgTable('users', {
   id: text('id').primaryKey().$defaultFn(() => generateId()),
   name: text('name').notNull(),
   email: text('email').unique().notNull(),
   passwordHash: text('passwordHash').notNull(),
-  role: text('role', { enum: roles }).default('user').notNull(),
-  createdAt: integer('createdAt', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now') * 1000)`).notNull(),
+  role: text('role').$type<typeof roles[number]>().default('user').notNull(),
+  createdAt: timestamp('createdAt', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 }, (table) => {
   return [
     index('users_name_idx').on(table.name),
@@ -24,17 +24,17 @@ export const users = sqliteTable('users', {
 });
 
 // ── VENUES ────────────────────────────────────────────────────
-export const venues = sqliteTable('venues', {
+export const venues = pgTable('venues', {
   id: text('id').primaryKey(), // IDs here are from constants.ts (e.g. ground-floor-main)
   nameAr: text('nameAr').notNull(),
-  section: text('section', { enum: sections }).notNull(),
+  section: text('section').$type<typeof sections[number]>().notNull(),
   capacity: integer('capacity'),
-  isDouble: integer('isDouble', { mode: 'boolean' }).default(false).notNull(),
+  isDouble: boolean('isDouble').default(false).notNull(),
   sortOrder: integer('sortOrder').notNull(),
 });
 
 // ── BOOKINGS ──────────────────────────────────────────────────
-export const bookings = sqliteTable('bookings', {
+export const bookings = pgTable('bookings', {
   id: text('id').primaryKey().$defaultFn(() => generateId()),
   venueId: text('venueId').notNull().references(() => venues.id, { onDelete: 'cascade' }),
   bookedBy: text('bookedBy').notNull().references(() => users.id, { onDelete: 'cascade' }),
@@ -43,11 +43,11 @@ export const bookings = sqliteTable('bookings', {
   startTime: text('startTime').notNull(),
   endTime: text('endTime').notNull(),
   weekDate: text('weekDate').notNull(),
-  isRecurring: integer('isRecurring', { mode: 'boolean' }).default(false).notNull(),
-  status: text('status', { enum: statuses }).default('active').notNull(),
+  isRecurring: boolean('isRecurring').default(false).notNull(),
+  status: text('status').$type<typeof statuses[number]>().default('active').notNull(),
   notes: text('notes'),
-  createdAt: integer('createdAt', { mode: 'timestamp' }).default(sql`(strftime('%s', 'now') * 1000)`).notNull(),
-  expiresAt: integer('expiresAt', { mode: 'timestamp' }).notNull(),
+  createdAt: timestamp('createdAt', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
+  expiresAt: timestamp('expiresAt', { withTimezone: true, mode: 'date' }).notNull(),
 }, (table) => {
   return [
     index('bookings_venue_day_idx').on(table.venueId, table.dayOfWeek),
@@ -57,7 +57,7 @@ export const bookings = sqliteTable('bookings', {
 });
 
 // ── BOOKING_ATTENDEES ─────────────────────────────────────────
-export const bookingAttendees = sqliteTable('booking_attendees', {
+export const bookingAttendees = pgTable('booking_attendees', {
   id: text('id').primaryKey().$defaultFn(() => generateId()),
   bookingId: text('bookingId').notNull().references(() => bookings.id, { onDelete: 'cascade' }),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
@@ -69,15 +69,16 @@ export const bookingAttendees = sqliteTable('booking_attendees', {
 });
 
 // ── RECURRING_APPROVALS ───────────────────────────────────────
-export const recurringApprovals = sqliteTable('recurring_approvals', {
+export const recurringApprovals = pgTable('recurring_approvals', {
   id: text('id').primaryKey().$defaultFn(() => generateId()),
   bookingId: text('bookingId').notNull().references(() => bookings.id, { onDelete: 'cascade' }),
   adminId: text('adminId').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  approved: integer('approved', { mode: 'boolean' }).default(false).notNull(),
-  votedAt: integer('votedAt', { mode: 'timestamp' }),
+  approved: boolean('approved').default(false).notNull(),
+  votedAt: timestamp('votedAt', { withTimezone: true, mode: 'date' }),
 }, (table) => {
   return [
     unique('recurring_approvals_unique').on(table.bookingId, table.adminId),
     index('recurring_approvals_booking_idx').on(table.bookingId),
   ];
 });
+

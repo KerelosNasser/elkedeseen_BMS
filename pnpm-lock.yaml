@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@libsql/client':
-        specifier: ^0.17.0
-        version: 0.17.0
       bcryptjs:
         specifier: ^3.0.3
         version: 3.0.3
@@ -5348,10 +5345,12 @@ snapshots:
       - bufferutil
       - encoding
       - utf-8-validate
+    optional: true
 
   '@libsql/core@0.17.0':
     dependencies:
       js-base64: 3.7.8
+    optional: true
 
   '@libsql/darwin-arm64@0.5.22':
     optional: true
@@ -5369,6 +5368,7 @@ snapshots:
       - bufferutil
       - encoding
       - utf-8-validate
+    optional: true
 
   '@libsql/isomorphic-ws@0.1.5':
     dependencies:
@@ -5377,6 +5377,7 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+    optional: true
 
   '@libsql/linux-arm-gnueabihf@0.5.22':
     optional: true
@@ -5437,7 +5438,8 @@ snapshots:
       '@tybys/wasm-util': 0.10.1
     optional: true
 
-  '@neon-rs/load@0.0.4': {}
+  '@neon-rs/load@0.0.4':
+    optional: true
 
   '@neondatabase/serverless@1.0.2':
     dependencies:
@@ -6383,6 +6385,7 @@ snapshots:
   '@types/ws@8.18.1':
     dependencies:
       '@types/node': 25.4.0
+    optional: true
 
   '@typescript-eslint/eslint-plugin@8.57.0(@typescript-eslint/parser@8.57.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)':
     dependencies:
@@ -6812,6 +6815,7 @@ snapshots:
       node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
+    optional: true
 
   cross-spawn@7.0.6:
     dependencies:
@@ -6888,7 +6892,8 @@ snapshots:
 
   depd@2.0.0: {}
 
-  detect-libc@2.0.2: {}
+  detect-libc@2.0.2:
+    optional: true
 
   detect-libc@2.1.2: {}
 
@@ -7857,7 +7862,8 @@ snapshots:
 
   jose@6.2.1: {}
 
-  js-base64@3.7.8: {}
+  js-base64@3.7.8:
+    optional: true
 
   js-tokens@4.0.0: {}
 
@@ -7931,6 +7937,7 @@ snapshots:
       '@libsql/linux-x64-gnu': 0.5.22
       '@libsql/linux-x64-musl': 0.5.22
       '@libsql/win32-x64-msvc': 0.5.22
+    optional: true
 
   lightningcss-android-arm64@1.31.1:
     optional: true
@@ -8123,6 +8130,7 @@ snapshots:
   node-fetch@2.7.0:
     dependencies:
       whatwg-url: 5.0.0
+    optional: true
 
   node-fetch@3.3.2:
     dependencies:
@@ -8368,7 +8376,8 @@ snapshots:
     dependencies:
       parse-ms: 4.0.0
 
-  promise-limit@2.7.0: {}
+  promise-limit@2.7.0:
+    optional: true
 
   prompts@2.4.2:
     dependencies:
@@ -8924,7 +8933,8 @@ snapshots:
     dependencies:
       tldts: 7.0.25
 
-  tr46@0.0.3: {}
+  tr46@0.0.3:
+    optional: true
 
   ts-api-utils@2.4.0(typescript@5.9.3):
     dependencies:
@@ -9100,12 +9110,14 @@ snapshots:
 
   web-streams-polyfill@3.3.3: {}
 
-  webidl-conversions@3.0.1: {}
+  webidl-conversions@3.0.1:
+    optional: true
 
   whatwg-url@5.0.0:
     dependencies:
       tr46: 0.0.3
       webidl-conversions: 3.0.1
+    optional: true
 
   which-boxed-primitive@1.1.1:
     dependencies:
@@ -9172,7 +9184,8 @@ snapshots:
 
   wrappy@1.0.2: {}
 
-  ws@8.19.0: {}
+  ws@8.19.0:
+    optional: true
 
   wsl-utils@0.3.1:
     dependencies:

@@ -1,9 +1,8 @@
 declare namespace NodeJS {
   interface ProcessEnv {
-    SERVICE_URL: string;
-    TURSO_CONNECTION_URL: string;
-    TURSO_AUTH_TOKEN: string;
+    DATABASE_URL: string;
     ADMIN_EMAILS: string;
+    CRON_SECRET: string;
     DB_MAX_CONNECTIONS?: string;
     NODE_ENV: 'development' | 'production' | 'test';
   }

@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { bookings, users, bookingAttendees, venues, recurringApprovals } from "@/db/schema";
-import { and, eq, gte, lte, or, sql, inArray } from "drizzle-orm";
+import { and, eq, gte, lte, or, sql, inArray, ilike } from "drizzle-orm";
 import { endOfWeek, startOfWeek } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { sendBookingNotification, sendApprovalRequestNotification } from "@/lib/mail";
@@ -145,10 +145,8 @@ export async function searchAttendees(query: string): Promise<UserSearchResult[]
     })
     .from(users)
     .where(or(
-      // basic ILIKE search, Drizzle 'ilike' might be needed depending on DB, but 'like' with % works too
-      // Neon/Postgres supports ILIKE
-      sql`${users.name} LIKE ${'%' + query + '%'}`,
-      sql`${users.email} LIKE ${'%' + query + '%'}`
+      ilike(users.name, `%${query}%`),
+      ilike(users.email, `%${query}%`)
     ))
     .limit(10);
 
