@@ -31,6 +31,7 @@ const DURATIONS = [
 export default function BookingFormClient({ venues, currentUserId, currentUserName }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [title, setTitle] = useState("");
@@ -108,8 +109,12 @@ export default function BookingFormClient({ venues, currentUserId, currentUserNa
         return;
       }
 
-      router.push("/admin");
+      setSuccess(true);
       router.refresh();
+      
+      setTimeout(() => {
+        router.push("/admin");
+      }, 2000);
       
     } catch (err: any) {
       setError(err.message || "حدث خطأ في النظام");
@@ -123,6 +128,17 @@ export default function BookingFormClient({ venues, currentUserId, currentUserNa
         <div className="bg-church-red/10 border-r-4 border-church-red p-4 rounded-lg flex items-start gap-3 animate-fade-up">
           <AlertCircle className="w-5 h-5 text-church-red mt-0.5 shrink-0" />
           <p className="text-church-red-dark font-body text-sm font-semibold">{error}</p>
+        </div>
+      )}
+
+      {success && (
+        <div className="bg-emerald-50 border-r-4 border-emerald-500 p-4 rounded-lg flex items-start gap-3 animate-fade-up">
+          <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <p className="text-emerald-700 font-body text-sm font-semibold">تم حفظ الحجز بنجاح! جاري تحويلك...</p>
         </div>
       )}
 

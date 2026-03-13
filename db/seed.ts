@@ -2,6 +2,7 @@ import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
 import * as schema from "./schema";
 import { config } from "dotenv";
+import { VENUES_CONFIG } from "../lib/constants";
 
 config({ path: ".env.local" });
 
@@ -16,32 +17,29 @@ async function main() {
   const client = createClient({ url, authToken });
   const db = drizzle(client, { schema });
 
-  console.log('Seeding venues...');
+  console.log('Syncing venues from constants...');
 
-  const initialVenues: (typeof schema.venues.$inferInsert)[] = [
-    // Section: ground_floor (قاعات الأرضي)
-    { nameAr: "قاعة الاجتماعات الكبرى", section: "ground_floor", capacity: 80, isDouble: false, sortOrder: 1 },
-    { nameAr: "قاعة التدريب", section: "ground_floor", capacity: 40, isDouble: false, sortOrder: 2 },
-    { nameAr: "القاعة متعددة الأغراض", section: "ground_floor", capacity: 60, isDouble: false, sortOrder: 3 },
-    
-    // Section: second_floor (قاعات الدور الثاني)
-    { nameAr: "قاعة المؤتمرات", section: "second_floor", capacity: 50, isDouble: false, sortOrder: 4 },
-    { nameAr: "قاعة الشباب", section: "second_floor", capacity: 35, isDouble: false, sortOrder: 5 },
-    { nameAr: "القاعة المزدوجة أ+ب", section: "second_floor", capacity: 90, isDouble: true, sortOrder: 6 },
-    
-    // Section: education_building (مبني الخدمة التعليمية)
-    { nameAr: "فصل التعليم ١", section: "education_building", capacity: 25, isDouble: false, sortOrder: 7 },
-    { nameAr: "فصل التعليم ٢", section: "education_building", capacity: 25, isDouble: false, sortOrder: 8 },
-    { nameAr: "قاعة النشاط", section: "education_building", capacity: 45, isDouble: false, sortOrder: 9 },
-  ];
-
-  for (const venue of initialVenues) {
-    await db.insert(schema.venues).values(venue).onConflictDoNothing();
+  for (const venue of VENUES_CONFIG) {
+    await db.insert(schema.venues).values({
+      id: venue.id,
+      nameAr: venue.nameAr,
+      section: venue.section,
+      capacity: venue.capacity,
+      isDouble: venue.isDouble,
+      sortOrder: venue.sortOrder,
+    }).onConflictDoUpdate({
+      target: schema.venues.id,
+      set: {
+        nameAr: venue.nameAr,
+        section: venue.section,
+        capacity: venue.capacity,
+        isDouble: venue.isDouble,
+        sortOrder: venue.sortOrder,
+      }
+    });
   }
 
-  console.log('Seed completed successfully.');
-  // Client closing for libsql is usually not strictly necessary for simple scripts but good practice
-  // client.close() is available on the client object
+  console.log('Sync completed successfully.');
   client.close();
 }
 

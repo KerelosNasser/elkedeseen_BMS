@@ -113,7 +113,18 @@ export default async function HomePage() {
                               </span>
                             </div>
                             {booking.status === "pending_approval" && (
-                              <span className="badge-pending rtl:mr-2">انتظار الموافقة</span>
+                              <div className="flex flex-col gap-1 items-start sm:items-end">
+                                <span className="badge-pending rtl:mr-2">انتظار الموافقة</span>
+                                {booking.approvals && (
+                                  <div className="flex flex-wrap gap-1 justify-end mt-1">
+                                    {booking.approvals.map(app => (
+                                      <span key={app.id} className={`text-[10px] px-1.5 py-0.5 rounded border ${app.approved ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-50 text-gray-500 border-gray-200'}`} title={app.admin.name}>
+                                        {app.admin.name.split(' ')[0]} {app.approved ? '✓' : '...'}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
                             )}
                           </div>
                         </div>

@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { bookings, recurringApprovals, users, venues } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth-middleware";
+import { sendBookingStatusUpdateNotification } from "@/lib/mail";
 
 export type ApprovalWithDetails = typeof recurringApprovals.$inferSelect & {
   booking: typeof bookings.$inferSelect & {
@@ -72,6 +73,28 @@ export async function voteOnApproval(approvalId: string, approved: boolean): Pro
         .set({ status: "rejected" })
         .where(eq(bookings.id, approvalRecord.bookingId));
         
+      // Fetch details for email
+      const [bookingDetails] = await db
+        .select({
+          user: users,
+          venue: venues,
+          booking: bookings
+        })
+        .from(bookings)
+        .innerJoin(users, eq(bookings.bookedBy, users.id))
+        .innerJoin(venues, eq(bookings.venueId, venues.id))
+        .where(eq(bookings.id, approvalRecord.bookingId));
+
+      if (bookingDetails) {
+        await sendBookingStatusUpdateNotification({
+          to: bookingDetails.user.email,
+          venueName: bookingDetails.venue.nameAr,
+          title: bookingDetails.booking.title,
+          status: 'rejected',
+          adminName: admin.name
+        });
+      }
+
       // Delete the pending approvals so they disappear from other admins' queues
       await db.delete(recurringApprovals)
         .where(eq(recurringApprovals.bookingId, approvalRecord.bookingId));
@@ -101,6 +124,27 @@ export async function voteOnApproval(approvalId: string, approved: boolean): Pro
         .set({ status: "active" })
         .where(eq(bookings.id, approvalRecord.bookingId));
         
+      // Fetch details for email
+      const [bookingDetails] = await db
+        .select({
+          user: users,
+          venue: venues,
+          booking: bookings
+        })
+        .from(bookings)
+        .innerJoin(users, eq(bookings.bookedBy, users.id))
+        .innerJoin(venues, eq(bookings.venueId, venues.id))
+        .where(eq(bookings.id, approvalRecord.bookingId));
+
+      if (bookingDetails) {
+        await sendBookingStatusUpdateNotification({
+          to: bookingDetails.user.email,
+          venueName: bookingDetails.venue.nameAr,
+          title: bookingDetails.booking.title,
+          status: 'active'
+        });
+      }
+
       // Clean up approvals since they are no longer needed
       await db.delete(recurringApprovals)
         .where(eq(recurringApprovals.bookingId, approvalRecord.bookingId));

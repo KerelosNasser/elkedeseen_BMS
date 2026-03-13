@@ -97,52 +97,84 @@ export default async function AdminDashboardPage() {
             <Link href="/admin/bookings" className="text-sm text-church-red font-semibold hover:underline">عرض الكل</Link>
           </div>
           
-          <div className="church-card overflow-hidden overflow-x-auto">
+          <div className="church-card overflow-hidden">
             {recentBookings.length === 0 ? (
               <div className="text-center py-8 text-church-text-light">
                 <span className="church-ornament opacity-30 mb-2 block">✧</span>
                 <p>لا يوجد حجوزات بعد</p>
               </div>
             ) : (
-              <table className="admin-table min-w-[600px]">
-                <thead>
-                  <tr>
-                    <th>الحدث</th>
-                    <th>القاعة</th>
-                    <th>بواسطة</th>
-                    <th>التاريخ / الوقت</th>
-                    <th>الحالة</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <>
+                {/* Desktop Table View */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="admin-table w-full">
+                    <thead>
+                      <tr>
+                        <th>الحدث</th>
+                        <th>القاعة</th>
+                        <th>بواسطة</th>
+                        <th>التاريخ / الوقت</th>
+                        <th>الحالة</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recentBookings.map((r) => (
+                        <tr key={r.booking.id}>
+                          <td className="font-bold">{r.booking.title}</td>
+                          <td>{r.venue.nameAr}</td>
+                          <td>
+                            <span className="badge bg-church-bg-warm text-church-text">
+                              {r.booker.name}
+                            </span>
+                          </td>
+                          <td className="text-xs">
+                            {r.booking.isRecurring ? (
+                               <div className="flex items-center gap-1 text-church-gold-dark font-bold"><span title="متكرر">🔄</span> متكرر</div>
+                            ) : (
+                              <div dir="ltr" className="text-right">
+                                {format(new Date(r.booking.weekDate), "d MMM", { locale: ar })}
+                              </div>
+                            )}
+                            <div className="text-church-text-muted mt-1">{formatTime(r.booking.startTime)}</div>
+                          </td>
+                          <td>
+                            {r.booking.status === "active" && <span className="badge-confirmed">مؤكد</span>}
+                            {r.booking.status === "pending_approval" && <span className="badge-pending">انتظار</span>}
+                            {r.booking.status === "rejected" && <span className="badge-cancelled">مرفوض</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="md:hidden divide-y divide-church-border-light">
                   {recentBookings.map((r) => (
-                    <tr key={r.booking.id}>
-                      <td className="font-bold">{r.booking.title}</td>
-                      <td>{r.venue.nameAr}</td>
-                      <td>
-                        <span className="badge bg-church-bg-warm text-church-text">
-                          {r.booker.name}
-                        </span>
-                      </td>
-                      <td className="text-xs">
-                        {r.booking.isRecurring ? (
-                           <div className="flex items-center gap-1 text-church-gold-dark font-bold"><span title="متكرر">🔄</span> متكرر</div>
-                        ) : (
-                          <div dir="ltr" className="text-right">
-                            {format(new Date(r.booking.weekDate), "d MMM", { locale: ar })}
-                          </div>
-                        )}
-                        <div className="text-church-text-muted mt-1">{formatTime(r.booking.startTime)}</div>
-                      </td>
-                      <td>
-                        {r.booking.status === "active" && <span className="badge-confirmed">مؤكد</span>}
-                        {r.booking.status === "pending_approval" && <span className="badge-pending">انتظار</span>}
-                        {r.booking.status === "rejected" && <span className="badge-cancelled">مرفوض</span>}
-                      </td>
-                    </tr>
+                    <div key={r.booking.id} className="p-4 space-y-3">
+                      <div className="flex items-start justify-between">
+                        <div className="font-bold text-church-text">{r.booking.title}</div>
+                        <div>
+                          {r.booking.status === "active" && <span className="badge-confirmed">مؤكد</span>}
+                          {r.booking.status === "pending_approval" && <span className="badge-pending">انتظار</span>}
+                          {r.booking.status === "rejected" && <span className="badge-cancelled">مرفوض</span>}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
+                        <div className="text-church-text-muted">القاعة:</div>
+                        <div className="text-church-text">{r.venue.nameAr}</div>
+                        <div className="text-church-text-muted">بواسطة:</div>
+                        <div className="text-church-text font-semibold">{r.booker.name}</div>
+                        <div className="text-church-text-muted">الوقت:</div>
+                        <div className="text-church-text">
+                          {r.booking.isRecurring ? "🔄 متكرر" : format(new Date(r.booking.weekDate), "d MMM", { locale: ar })}
+                          {" "}({formatTime(r.booking.startTime)})
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              </>
             )}
           </div>
         </div>

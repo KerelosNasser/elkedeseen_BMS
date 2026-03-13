@@ -15,15 +15,13 @@ export type BookingWithVenueAndBooker = typeof bookings.$inferSelect & {
     name: string;
     role: string;
   };
+  approvals?: (typeof recurringApprovals.$inferSelect & {
+    admin: { name: string };
+  })[];
 };
 
 export async function getBookingsForUser(userId: string): Promise<BookingWithVenueAndBooker[]> {
   const now = new Date();
-  
-  // We need bookings where user is bookedBy
-  // OR user is in booking_attendees for that booking
-  // Note: For Drizzle without complex subqueries easily, we can just do two queries and merge, 
-  // or use left joins carefully. 
   
   // 1. Fetch where user is the booker
   const bookedByMe = await db
@@ -78,7 +76,29 @@ export async function getBookingsForUser(userId: string): Promise<BookingWithVen
   processResult(bookedByMe);
   processResult(attending);
 
-  return Array.from(allBookingsMap.values());
+  const finalBookings = Array.from(allBookingsMap.values());
+
+  // Enrich with approval info for pending ones
+  for (const b of finalBookings) {
+    if (b.status === "pending_approval") {
+      const approvals = await db
+        .select({
+          id: recurringApprovals.id,
+          bookingId: recurringApprovals.bookingId,
+          adminId: recurringApprovals.adminId,
+          approved: recurringApprovals.approved,
+          votedAt: recurringApprovals.votedAt,
+          admin: { name: users.name }
+        })
+        .from(recurringApprovals)
+        .innerJoin(users, eq(recurringApprovals.adminId, users.id))
+        .where(eq(recurringApprovals.bookingId, b.id));
+      
+      b.approvals = approvals;
+    }
+  }
+
+  return finalBookings;
 }
 
 export type UserSearchResult = {
