@@ -1,17 +1,20 @@
-import { neon } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { drizzle } from "drizzle-orm/libsql";
+import { createClient } from "@libsql/client";
 import * as schema from "./schema";
 import { config } from "dotenv";
 
 config({ path: ".env.local" });
 
 async function main() {
-  if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is not set');
+  const url = process.env.TURSO_CONNECTION_URL;
+  const authToken = process.env.TURSO_AUTH_TOKEN;
+
+  if (!url) {
+    throw new Error('TURSO_CONNECTION_URL is not set');
   }
 
-  const sql = neon(process.env.DATABASE_URL);
-  const db = drizzle(sql, { schema });
+  const client = createClient({ url, authToken });
+  const db = drizzle(client, { schema });
 
   console.log('Seeding venues...');
 
@@ -37,6 +40,9 @@ async function main() {
   }
 
   console.log('Seed completed successfully.');
+  // Client closing for libsql is usually not strictly necessary for simple scripts but good practice
+  // client.close() is available on the client object
+  client.close();
 }
 
 main().catch((err) => {

@@ -16,6 +16,7 @@
 We didn't just build a booking app; we built a digital cathedral. Every pixel is infused with a "Coptic Aesthetic" — deep liturgical reds, refined golden accents, and parchment-inspired backgrounds. It's a system that feels familiar to the spirit but powerful to the administrator.
 
 ### 🏛️ 5 Core Pillars
+
 - **Venue Command**: Manage sacred spaces with capacity awareness and architectural mapping.
 - **Ornate Scheduling**: High-performance calendar systems supporting recurring spiritual services.
 - **Admin Consensus**: A multi-admin approval workflow for recurring events to ensure liturgical harmony.
@@ -41,12 +42,12 @@ Built for scale, speed, and standardizing the "Vibe Coding" paradigm.
 
 Our design system is baked into the DNA of the project. We use a curated palette and custom tokens to maintain visual divinity:
 
-| Token | Value | Purpose |
-| :--- | :--- | :--- |
-| **Church Red** | `#9B1C1F` | Dignity, headings, primary actions |
-| **Church Gold** | `#D4AF37` | Radiance, borders, ornaments |
-| **Church BG** | `#F5EFE4` | Serenity, page backgrounds |
-| **Ornate Divider** | Ornate ✦ | Sacred separation of content |
+| Token              | Value     | Purpose                            |
+| :----------------- | :-------- | :--------------------------------- |
+| **Church Red**     | `#9B1C1F` | Dignity, headings, primary actions |
+| **Church Gold**    | `#D4AF37` | Radiance, borders, ornaments       |
+| **Church BG**      | `#F5EFE4` | Serenity, page backgrounds         |
+| **Ornate Divider** | Ornate ✦  | Sacred separation of content       |
 
 ---
 
@@ -59,7 +60,7 @@ Ensure you have the digital keys before entering the sanctuary.
 Create a `.env.local` file with the following:
 
 ```env
-DATABASE_URL=your_postgres_url
+SERVICE_URL=postgres://avnadmin:password@host:port/defaultdb?sslmode=require
 SESSION_SECRET=your_long_random_string
 ADMIN_EMAILS=admin1@example.com,admin2@example.com
 
@@ -85,9 +86,11 @@ The sanctuary will be available at `http://localhost:3000`.
 ## 🔥 Features that Stand Out
 
 ### 📧 The Smart Emailer
+
 Our notification system doesn't feel like a bot. It uses the **Identity** of the admin who makes a booking to send the email, setting the `from` display name and `reply-to` headers automatically. This ensures that when an admin receives a notification, they can simply hit "Reply" to talk to the booker.
 
 ### 🗓️ Recurring Logic
+
 Handles complex recurring patterns with mandatory admin consensus. It tracks every vote and only activates the booking when the council of admins agrees.
 
 ---

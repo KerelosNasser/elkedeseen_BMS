@@ -100,8 +100,8 @@ export async function searchAttendees(query: string): Promise<UserSearchResult[]
     .where(or(
       // basic ILIKE search, Drizzle 'ilike' might be needed depending on DB, but 'like' with % works too
       // Neon/Postgres supports ILIKE
-      sql`${users.name} ILIKE ${'%' + query + '%'}`,
-      sql`${users.email} ILIKE ${'%' + query + '%'}`
+      sql`${users.name} LIKE ${'%' + query + '%'}`,
+      sql`${users.email} LIKE ${'%' + query + '%'}`
     ))
     .limit(10);
 

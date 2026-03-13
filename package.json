@@ -8,11 +8,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "db:push": "drizzle-kit push",
+    "db:seed": "tsx db/seed.ts",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.2",
+    "@libsql/client": "^0.17.0",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -24,6 +26,7 @@
     "next-themes": "^0.4.6",
     "nodemailer": "^8.0.2",
     "pg": "^8.20.0",
+    "postgres": "^3.4.8",
     "radix-ui": "^1.4.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
