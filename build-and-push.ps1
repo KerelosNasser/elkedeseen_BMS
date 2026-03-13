@@ -6,6 +6,7 @@ $TAG = "latest"
 Write-Host "🚀 Building Docker image..." -ForegroundColor Cyan
 docker build -t ghcr.io/$GH_USERNAME/$IMAGE_NAME:$TAG .
 
+
 Write-Host "🚢 Pushing image to registry..." -ForegroundColor Cyan
 docker push ghcr.io/$GH_USERNAME/$IMAGE_NAME:$TAG
 

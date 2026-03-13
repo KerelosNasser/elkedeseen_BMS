@@ -101,10 +101,7 @@ export async function registerAction(formData: FormData): Promise<{ success: boo
 
 export async function logoutAction(): Promise<{ success: boolean }> {
   try {
-    const sessionData = await getSession();
-    if (sessionData) {
-      await deleteSession(sessionData.session.token);
-    }
+    await deleteSession();
   } catch (error) {
     console.error("Logout error", error);
   }
