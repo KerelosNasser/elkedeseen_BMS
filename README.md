@@ -60,15 +60,14 @@ Ensure you have the digital keys before entering the sanctuary.
 Create a `.env.local` file with the following:
 
 ```env
-SERVICE_URL=postgres://avnadmin:password@host:port/defaultdb?sslmode=require
-SESSION_SECRET=your_long_random_string
-ADMIN_EMAILS=admin1@example.com,admin2@example.com
+DATABASE_URL=postgresql://user:password@host:port/dbname?sslmode=require
+ADMIN_EMAILS=admin@example.com
 
 # SMTP (Optional)
 SMTP_HOST=smtp.example.com
 SMTP_PORT=587
 SMTP_USER=user@example.com
-SMTP_PASS=pass
+SMTP_PASS=password
 SMTP_FROM="System" <noreply@example.com>
 ```
 
