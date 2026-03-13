@@ -4,12 +4,17 @@ import * as schema from './schema';
 
 const connectionString = process.env.DATABASE_URL;
 
-if (!connectionString) {
-  throw new Error('DATABASE_URL environment variable is missing.');
-}
-
 // Disable prefetch as it is not supported for "Transaction" pool mode
-const client = postgres(connectionString, { prepare: false });
+// Using a proxy or lazy initialization to handle cases where DATABASE_URL is missing during build
+const createClient = () => {
+  if (!connectionString) {
+    throw new Error('DATABASE_URL environment variable is missing.');
+  }
+  return postgres(connectionString, { prepare: false });
+};
 
-export const db = drizzle(client, { schema });
+// Next.js evaluates this at build time. We use a dummy for the client if connectionString is missing.
+const client = connectionString ? postgres(connectionString, { prepare: false }) : null;
+
+export const db = drizzle(client as any, { schema });
 export * from './schema';

@@ -24,7 +24,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 # Install pnpm for the build script if needed
 RUN npm install -g pnpm
-RUN pnpm build
+RUN DATABASE_URL=postgres://dummy:dummy@localhost:5432/dummy pnpm build
 
 # 3. Production image, copy all the files and run next
 FROM node:22-alpine AS runner

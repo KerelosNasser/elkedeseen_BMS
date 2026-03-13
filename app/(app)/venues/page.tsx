@@ -4,6 +4,8 @@ import { startOfWeek } from "date-fns";
 import { SECTIONS_MAP } from "@/lib/constants";
 import { sections as sectionsList } from "@/db/schema";
 
+export const dynamic = "force-dynamic";
+
 export default async function VenuesPage() {
   const allVenues = await getAllVenues();
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 0 }); // Sunday
