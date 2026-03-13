@@ -27,7 +27,20 @@ export async function getBookingsForUser(userId: string): Promise<BookingWithVen
   // 1. Fetch where user is the booker
   const bookedByMe = await db
     .select({
-      booking: bookings,
+      booking: {
+        id: bookings.id,
+        venueId: bookings.venueId,
+        bookedBy: bookings.bookedBy,
+        title: bookings.title,
+        dayOfWeek: bookings.dayOfWeek,
+        startTime: bookings.startTime,
+        endTime: bookings.endTime,
+        weekDate: bookings.weekDate,
+        isRecurring: bookings.isRecurring,
+        status: bookings.status,
+        expiresAt: bookings.expiresAt,
+        createdAt: bookings.createdAt,
+      },
       venue: venues,
       booker: { id: users.id, name: users.name, role: users.role },
     })
@@ -45,7 +58,20 @@ export async function getBookingsForUser(userId: string): Promise<BookingWithVen
   // 2. Fetch where user is an attendee
   const attending = await db
     .select({
-      booking: bookings,
+      booking: {
+        id: bookings.id,
+        venueId: bookings.venueId,
+        bookedBy: bookings.bookedBy,
+        title: bookings.title,
+        dayOfWeek: bookings.dayOfWeek,
+        startTime: bookings.startTime,
+        endTime: bookings.endTime,
+        weekDate: bookings.weekDate,
+        isRecurring: bookings.isRecurring,
+        status: bookings.status,
+        expiresAt: bookings.expiresAt,
+        createdAt: bookings.createdAt,
+      },
       venue: venues,
       booker: { id: users.id, name: users.name, role: users.role },
     })

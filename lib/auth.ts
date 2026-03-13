@@ -1,8 +1,13 @@
 import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { sessions, users } from "@/db/schema";
+import { users } from "@/db/schema";
 import bcrypt from "bcryptjs";
+import { SignJWT, jwtVerify } from "jose";
+
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || "default_secret_at_least_32_chars_long"
+);
 
 export async function hashPassword(plain: string): Promise<string> {
   const salt = await bcrypt.genSalt(10);
@@ -13,15 +18,14 @@ export async function verifyPassword(plain: string, hash: string): Promise<boole
   return bcrypt.compare(plain, hash);
 }
 
-export async function createSession(userId: string): Promise<string> {
-  const token = crypto.randomUUID();
+export async function createSession(userId: string): Promise<void> {
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7); // 7 days
-
-  await db.insert(sessions).values({
-    userId,
-    token,
-    expiresAt,
-  });
+  
+  const token = await new SignJWT({ userId })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("7d")
+    .sign(JWT_SECRET);
 
   const cookieStore = await cookies();
   cookieStore.set("auth_session", token, {
@@ -29,42 +33,37 @@ export async function createSession(userId: string): Promise<string> {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     expires: expiresAt,
+    path: "/",
   });
-
-  return token;
 }
 
-export async function deleteSession(token: string): Promise<void> {
-  await db.delete(sessions).where(eq(sessions.token, token));
+export async function deleteSession(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete("auth_session");
 }
 
-export async function getSession(): Promise<{ user: typeof users.$inferSelect; session: typeof sessions.$inferSelect } | null> {
+export async function getSession(): Promise<{ user: typeof users.$inferSelect } | null> {
   const cookieStore = await cookies();
   const token = cookieStore.get("auth_session")?.value;
 
   if (!token) return null;
 
-  const result = await db
-    .select({ user: users, session: sessions })
-    .from(sessions)
-    .innerJoin(users, eq(sessions.userId, users.id))
-    .where(eq(sessions.token, token))
-    .limit(1);
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const userId = payload.userId as string;
 
-  if (result.length === 0) {
-    return null;
+    const result = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (result.length === 0) return null;
+
+    return { user: result[0] };
+  } catch (err) {
+    return null; // Invalid or expired token
   }
-
-  const { user, session } = result[0];
-
-  if (Date.now() >= session.expiresAt.getTime()) {
-    await deleteSession(token);
-    return null;
-  }
-
-  return { user, session };
 }
 
 export async function getCurrentUser(): Promise<typeof users.$inferSelect | null> {

@@ -162,6 +162,7 @@ export default function BookingFormClient({ venues, currentUserId, currentUserNa
             placeholder="مثال: اجتماع إعداد خدام، درس كتاب..."
             value={title}
             onChange={e => setTitle(e.target.value)}
+            maxLength={100}
             required
           />
         </div>
