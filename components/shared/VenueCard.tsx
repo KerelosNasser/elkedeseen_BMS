@@ -3,6 +3,7 @@
 import { useState } from "react";
 import WeekScheduleGrid from "./WeekScheduleGrid";
 import { Users, CalendarDays, Maximize, ChevronDown, ChevronUp } from "lucide-react";
+import { SECTIONS_MAP } from "@/lib/constants";
 
 type BookingWithDetails = {
   id: string;
@@ -23,7 +24,7 @@ type BookingWithDetails = {
 type Venue = {
   id: string;
   nameAr: string;
-  section: "ground_floor" | "second_floor" | "education_building";
+  section: "ground_floor" | "second_floor" | "education_building" | "other" | "dev_center";
   capacity: number | null;
   isDouble: boolean;
   sortOrder: number;
@@ -46,6 +47,11 @@ export default function VenueCard({ venue, bookings, weekStart }: VenueCardProps
   return (
     <div className="flex flex-col gap-3">
       <div className="church-card p-4 sm:p-5 flex flex-col h-full">
+        <div className="mb-2">
+          <span className="text-[10px] text-church-gold-dark font-bold bg-church-gold/10 px-2 py-0.5 rounded border border-church-gold/20">
+            {SECTIONS_MAP[venue.section as keyof typeof SECTIONS_MAP]}
+          </span>
+        </div>
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
           <h3 className="font-title text-xl sm:text-2xl text-church-red leading-tight">{venue.nameAr}</h3>
           <div className="flex gap-1.5 flex-wrap">

@@ -3,7 +3,7 @@ import { sql } from 'drizzle-orm';
 
 // Enums (SQLite doesn't have native enums, so we'll use text)
 export const roles = ['admin', 'user'] as const;
-export const sections = ['ground_floor', 'second_floor', 'education_building'] as const;
+export const sections = ['ground_floor', 'second_floor', 'education_building', 'other', 'dev_center'] as const;
 export const statuses = ['active', 'pending_approval', 'rejected'] as const;
 
 // ── USERS ─────────────────────────────────────────────────────

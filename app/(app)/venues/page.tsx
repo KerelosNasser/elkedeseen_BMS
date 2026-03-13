@@ -1,6 +1,8 @@
 import { getAllVenues, getBookingsForVenue } from "@/actions/venue.actions";
 import VenueCard from "@/components/shared/VenueCard";
 import { startOfWeek } from "date-fns";
+import { SECTIONS_MAP } from "@/lib/constants";
+import { sections as sectionsList } from "@/db/schema";
 
 export default async function VenuesPage() {
   const allVenues = await getAllVenues();
@@ -15,12 +17,6 @@ export default async function VenuesPage() {
 
   const venuesWithBookings = await Promise.all(venuesWithBookingsPromises);
 
-  const sections = [
-    { id: "ground_floor", title: "قاعات الأرضي" },
-    { id: "second_floor", title: "قاعات الدور الثاني" },
-    { id: "education_building", title: "مبني الخدمة التعليمية" },
-  ] as const;
-
   return (
     <div className="church-container church-section">
       <div className="text-center mb-12 animate-fade-up">
@@ -34,14 +30,15 @@ export default async function VenuesPage() {
       </div>
 
       <div className="space-y-16">
-        {sections.map((section) => {
-          const sectionVenues = venuesWithBookings.filter((v) => v.venue.section === section.id);
+        {sectionsList.map((sectionId) => {
+          const sectionTitle = SECTIONS_MAP[sectionId as keyof typeof SECTIONS_MAP];
+          const sectionVenues = venuesWithBookings.filter((v) => v.venue.section === sectionId);
           
           if (sectionVenues.length === 0) return null;
 
           return (
-            <div key={section.id} className="animate-fade-up">
-              <h2 className="font-title text-3xl text-church-gold-dark mb-2 text-right">{section.title}</h2>
+            <div key={sectionId} className="animate-fade-up">
+              <h2 className="font-title text-3xl text-church-gold-dark mb-2 text-right">{sectionTitle}</h2>
               <div className="gold-divider-simple mb-8" />
               
               {/* Grid for Venue Cards */}

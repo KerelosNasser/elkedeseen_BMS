@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { bookings, users, bookingAttendees, venues, recurringApprovals } from "@/db/schema";
 import { and, eq, gte, lte, or, sql, inArray } from "drizzle-orm";
 import { endOfWeek, startOfWeek } from "date-fns";
+import { revalidatePath } from "next/cache";
 import { sendBookingNotification, sendApprovalRequestNotification } from "@/lib/mail";
 
 const daysAr = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
@@ -251,6 +252,7 @@ export async function createBooking(data: any) {
       // Don't fail the booking if email fails
     }
 
+    revalidatePath("/");
     return { success: true, bookingId: newBooking.id };
   } catch (error) {
     console.error("Failed to create booking", error);
@@ -269,6 +271,7 @@ export async function deleteBooking(bookingId: string) {
     // Delete Booking
     await db.delete(bookings).where(eq(bookings.id, bookingId));
     
+    revalidatePath("/");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete booking:", error);

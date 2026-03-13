@@ -5,6 +5,7 @@ import { bookings, recurringApprovals, users, venues } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth-middleware";
 import { sendBookingStatusUpdateNotification } from "@/lib/mail";
+import { revalidatePath } from "next/cache";
 
 export type ApprovalWithDetails = typeof recurringApprovals.$inferSelect & {
   booking: typeof bookings.$inferSelect & {
@@ -150,6 +151,7 @@ export async function voteOnApproval(approvalId: string, approved: boolean): Pro
         .where(eq(recurringApprovals.bookingId, approvalRecord.bookingId));
     }
 
+    revalidatePath("/");
     return { success: true };
   } catch (error) {
     console.error("Vote error:", error);

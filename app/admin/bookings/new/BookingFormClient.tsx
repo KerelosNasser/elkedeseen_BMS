@@ -6,11 +6,12 @@ import AttendeeSelector from "@/components/shared/AttendeeSelector";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Calendar, Clock, Loader2, MapPin } from "lucide-react";
 import { format, addMonths } from "date-fns";
+import { SECTIONS_MAP } from "@/lib/constants";
 
 interface Venue {
   id: string;
   nameAr: string;
-  section: "ground_floor" | "second_floor" | "education_building";
+  section: "ground_floor" | "second_floor" | "education_building" | "other" | "dev_center";
   isDouble: boolean;
 }
 
@@ -175,11 +176,20 @@ export default function BookingFormClient({ venues, currentUserId, currentUserNa
             required
           >
             <option value="" disabled>اختر القاعة...</option>
-            {venues.map(v => (
-              <option key={v.id} value={v.id}>
-                {v.nameAr} {v.isDouble ? "(مزدوجة)" : ""}
-              </option>
-            ))}
+            {Object.entries(SECTIONS_MAP).map(([sectionKey, sectionName]) => {
+              const sectionVenues = venues.filter(v => v.section === sectionKey);
+              if (sectionVenues.length === 0) return null;
+              
+              return (
+                <optgroup key={sectionKey} label={sectionName}>
+                  {sectionVenues.map(v => (
+                    <option key={v.id} value={v.id}>
+                      {v.nameAr} {v.isDouble ? "(مزدوجة)" : ""}
+                    </option>
+                  ))}
+                </optgroup>
+              );
+            })}
           </select>
         </div>
 
