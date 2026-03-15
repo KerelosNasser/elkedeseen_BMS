@@ -4,9 +4,8 @@ import { sql } from 'drizzle-orm';
 // Helper for shorter, URL-safe IDs
 const generateId = () => Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8);
 
-// Enums (Postgres supports native enums, but keeping them as text with check constraints or just text for simplicity/consistency with existing logic)
+// Enums
 export const roles = ['admin', 'user'] as const;
-export const sections = ['ground_floor', 'second_floor', 'education_building', 'other', 'dev_center'] as const;
 export const statuses = ['active', 'pending_approval', 'rejected'] as const;
 
 // ── USERS ─────────────────────────────────────────────────────
@@ -16,6 +15,7 @@ export const users = pgTable('users', {
   email: text('email').unique().notNull(),
   passwordHash: text('passwordHash').notNull(),
   role: text('role').$type<typeof roles[number]>().default('user').notNull(),
+  status: text('status').$type<typeof statuses[number]>().default('pending_approval').notNull(),
   createdAt: timestamp('createdAt', { withTimezone: true, mode: 'date' }).defaultNow().notNull(),
 }, (table) => {
   return [
@@ -23,11 +23,18 @@ export const users = pgTable('users', {
   ];
 });
 
+// ── SECTIONS ──────────────────────────────────────────────────
+export const sections = pgTable('sections', {
+  id: text('id').primaryKey().$defaultFn(() => generateId()),
+  nameAr: text('nameAr').notNull(),
+  sortOrder: integer('sortOrder').default(0).notNull(),
+});
+
 // ── VENUES ────────────────────────────────────────────────────
 export const venues = pgTable('venues', {
-  id: text('id').primaryKey(), // IDs here are from constants.ts (e.g. ground-floor-main)
+  id: text('id').primaryKey().$defaultFn(() => generateId()),
   nameAr: text('nameAr').notNull(),
-  section: text('section').$type<typeof sections[number]>().notNull(),
+  section: text('section').notNull().references(() => sections.id),
   capacity: integer('capacity'),
   isDouble: boolean('isDouble').default(false).notNull(),
   sortOrder: integer('sortOrder').notNull(),

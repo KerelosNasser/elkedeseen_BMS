@@ -6,6 +6,7 @@ import { startOfWeek, endOfWeek, format } from "date-fns";
 import { ar } from "date-fns/locale";
 import Link from "next/link";
 import { getPendingApprovalsForAdmin } from "@/actions/approval.actions";
+import { Users, MapPin, LayoutGrid } from "lucide-react";
 
 export default async function AdminDashboardPage() {
   const admin = await requireAdmin();
@@ -20,20 +21,18 @@ export default async function AdminDashboardPage() {
     bookingsThisWeekRes,
     venuesCountRes,
     usersCountRes,
+    pendingUsersRes,
     pendingApprovals,
     recentBookings
   ] = await Promise.all([
     db.select({ value: count() }).from(bookings).where(
        and(
          eq(bookings.status, "active"),
-         eq(bookings.isRecurring, false),
-         // A simple approximation for "bookings this week".
-         // Greater than start of week, less than end of week.
-         // Actually, let's just count total active bookings created this week for the metric
-       )
+         eq(bookings.isRecurring, false),)
     ),
     db.select({ value: count() }).from(venues),
-    db.select({ value: count() }).from(users),
+    db.select({ value: count() }).from(users).where(eq(users.status, "active")),
+    db.select({ value: count() }).from(users).where(eq(users.status, "pending_approval")),
     getPendingApprovalsForAdmin(admin.id),
     db.select({
       booking: bookings,
@@ -49,14 +48,15 @@ export default async function AdminDashboardPage() {
 
   const totalBookings = bookingsThisWeekRes[0].value;
   const totalVenues = venuesCountRes[0].value;
-  const totalUsers = usersCountRes[0].value;
-  const pendingCount = pendingApprovals.length;
+  const activeUsersCount = usersCountRes[0].value;
+  const pendingUsersCount = pendingUsersRes[0].value;
+  const pendingCount = pendingApprovals.length; // This is for bookings
 
   const stats = [
     { label: "حجوزات هذا الأسبوع", value: totalBookings },
-    { label: "موافقات معلقة", value: pendingCount, highlight: pendingCount > 0 },
-    { label: "إجمالي القاعات", value: totalVenues },
-    { label: "المستخدمين النشطين", value: totalUsers },
+    { label: "موافقات معلقة (حجز)", value: pendingCount, highlight: pendingCount > 0 },
+    { label: "أعضاء بانتظار الموافقة", value: pendingUsersCount, highlight: pendingUsersCount > 0 },
+    { label: "المستخدمين النشطين", value: activeUsersCount },
   ];
 
   const formatTime = (timeStr: string) => {
@@ -74,19 +74,49 @@ export default async function AdminDashboardPage() {
         </Link>
       </div>
 
-      {/* Stats Row */}
+      {/* Stats & Actions Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 animate-fade-up" style={{ animationDelay: "100ms" }}>
         {stats.map((stat, i) => (
-          <div key={i} className="church-card p-6 flex flex-col items-center justify-center text-center">
-            <span className="font-body text-sm font-semibold text-church-text-muted mb-2">{stat.label}</span>
-            <span className={`font-title text-3xl ${stat.highlight ? "text-church-red" : "text-church-gold-dark"}`}>
+          <div key={i} className="church-card p-4 md:p-6 flex flex-col items-center justify-center text-center">
+            <span className="font-body text-xs md:text-sm font-semibold text-church-text-muted mb-2">{stat.label}</span>
+            <span className={`font-title text-2xl md:text-3xl ${stat.highlight ? "text-church-red" : "text-church-gold-dark"}`}>
               {stat.value}
             </span>
-            {stat.highlight && (
-               <span className="badge-pending mt-2">عاجل</span>
-            )}
           </div>
         ))}
+      </div>
+
+      {/* Admin Quick Actions - Control Panel Sections */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-up" style={{ animationDelay: "150ms" }}>
+        <Link href="/admin/users" className="church-card p-6 flex items-center gap-4 hover:border-church-red/50 transition-all group">
+          <div className="bg-church-red/10 p-3 rounded-xl group-hover:bg-church-red group-hover:text-white transition-colors">
+            <Users className="w-6 h-6 text-church-red group-hover:text-white" />
+          </div>
+          <div>
+            <h3 className="font-title text-xl text-church-text">إدارة المستخدمين</h3>
+            <p className="text-xs text-church-text-light mt-1">الموافقة على الأعضاء الجدد وتعديل الصلاحيات</p>
+          </div>
+        </Link>
+
+        <Link href="/admin/venues" className="church-card p-6 flex flex-col sm:flex-row items-center gap-4 hover:border-church-gold/50 transition-all group">
+          <div className="bg-church-gold/10 p-3 rounded-xl group-hover:bg-church-gold group-hover:text-white transition-colors">
+            <MapPin className="w-6 h-6 text-church-gold-dark group-hover:text-white" />
+          </div>
+          <div className="text-center sm:text-right">
+            <h3 className="font-title text-xl text-church-text">إدارة القاعات</h3>
+            <p className="text-xs text-church-text-light mt-1">تحديث بيانات القاعات والسعة</p>
+          </div>
+        </Link>
+
+        <Link href="/admin/sections" className="church-card p-6 flex flex-col sm:flex-row items-center gap-4 hover:border-church-gold/50 transition-all group lg:col-span-2 xl:col-span-1">
+          <div className="bg-church-bg-warm p-3 rounded-xl group-hover:bg-church-gold-dark group-hover:text-white transition-colors border border-church-border-light">
+            <LayoutGrid className="w-6 h-6 text-church-text group-hover:text-white" />
+          </div>
+          <div className="text-center sm:text-right">
+            <h3 className="font-title text-xl text-church-text">إدارة الأقسام</h3>
+            <p className="text-xs text-church-text-light mt-1">تنظيم القاعات في مجموعات</p>
+          </div>
+        </Link>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8 animate-fade-up" style={{ animationDelay: "200ms" }}>

@@ -1,10 +1,14 @@
 import { requireAdmin } from "@/lib/auth-middleware";
 import { getAllVenues } from "@/actions/venue.actions";
+import { getAllSections } from "@/actions/section.actions";
 import BookingFormClient from "./BookingFormClient";
 
 export default async function NewBookingPage() {
-  const admin = await requireAdmin();
-  const venues = await getAllVenues();
+  const [admin, venues, sections] = await Promise.all([
+    requireAdmin(),
+    getAllVenues(),
+    getAllSections()
+  ]);
 
   return (
     <div className="church-container church-section">
@@ -19,6 +23,7 @@ export default async function NewBookingPage() {
 
         <BookingFormClient 
           venues={venues} 
+          sections={sections}
           currentUserId={admin.id} 
           currentUserName={admin.name} 
         />

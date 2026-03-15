@@ -6,17 +6,21 @@ import AttendeeSelector from "@/components/shared/AttendeeSelector";
 import { useRouter } from "next/navigation";
 import { AlertCircle, Calendar, Clock, Loader2, MapPin } from "lucide-react";
 import { format, addMonths } from "date-fns";
-import { SECTIONS_MAP } from "@/lib/constants";
-
 interface Venue {
   id: string;
   nameAr: string;
-  section: "ground_floor" | "second_floor" | "education_building" | "other" | "dev_center";
+  section: string;
   isDouble: boolean;
+}
+
+interface Section {
+  id: string;
+  nameAr: string;
 }
 
 interface Props {
   venues: Venue[];
+  sections: Section[];
   currentUserId: string;
   currentUserName: string;
 }
@@ -29,7 +33,7 @@ const DURATIONS = [
   { label: "3 ساعات", value: 180 },
 ];
 
-export default function BookingFormClient({ venues, currentUserId, currentUserName }: Props) {
+export default function BookingFormClient({ venues, sections, currentUserId, currentUserName }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -169,7 +173,7 @@ export default function BookingFormClient({ venues, currentUserId, currentUserNa
 
         {/* Venue */}
         <div className="md:col-span-2">
-          <label className="form-label block mb-2 flex items-center gap-2"><MapPin className="w-4 h-4 text-church-red" /> القاعة</label>
+          <label className="form-label mb-2 flex items-center gap-2"><MapPin className="w-4 h-4 text-church-red" /> القاعة</label>
           <select
             className="form-input w-full cursor-pointer"
             value={venueId}
@@ -177,12 +181,12 @@ export default function BookingFormClient({ venues, currentUserId, currentUserNa
             required
           >
             <option value="" disabled>اختر القاعة...</option>
-            {Object.entries(SECTIONS_MAP).map(([sectionKey, sectionName]) => {
-              const sectionVenues = venues.filter(v => v.section === sectionKey);
+            {sections.map((section) => {
+              const sectionVenues = venues.filter(v => v.section === section.id);
               if (sectionVenues.length === 0) return null;
               
               return (
-                <optgroup key={sectionKey} label={sectionName}>
+                <optgroup key={section.id} label={section.nameAr}>
                   {sectionVenues.map(v => (
                     <option key={v.id} value={v.id}>
                       {v.nameAr} {v.isDouble ? "(مزدوجة)" : ""}
@@ -196,7 +200,7 @@ export default function BookingFormClient({ venues, currentUserId, currentUserNa
 
         {/* Date */}
         <div>
-          <label className="form-label block mb-2 flex items-center gap-2"><Calendar className="w-4 h-4 text-church-gold-dark" /> التاريخ</label>
+          <label className="form-label mb-2 flex items-center gap-2"><Calendar className="w-4 h-4 text-church-gold-dark" /> التاريخ</label>
           <input
             type="date"
             className="form-input w-full"
@@ -210,7 +214,7 @@ export default function BookingFormClient({ venues, currentUserId, currentUserNa
         {/* Time and Duration */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="form-label block mb-2 flex items-center gap-2"><Clock className="w-4 h-4 text-church-gold-dark" /> وقت البدء</label>
+            <label className="form-label mb-2 flex items-center gap-2"><Clock className="w-4 h-4 text-church-gold-dark" /> وقت البدء</label>
             <input
               type="time"
               className="form-input w-full"

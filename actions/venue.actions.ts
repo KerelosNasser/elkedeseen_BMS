@@ -1,10 +1,12 @@
 "use server";
 
 import { db } from "@/db";
-import { venues, bookings, users } from "@/db/schema";
-import { and, eq, gte, lte, or } from "drizzle-orm";
+import { venues, bookings, users, sections } from "@/db/schema";
+import { and, eq, gte, lte, or, asc } from "drizzle-orm";
 import { endOfWeek, startOfWeek } from "date-fns";
 import { VENUES_CONFIG } from "@/lib/constants";
+import { requireAdmin } from "@/lib/auth-middleware";
+import { revalidatePath } from "next/cache";
 
 export type VenueWithBookings = typeof venues.$inferSelect & {
   bookings: BookingWithDetails[];
@@ -19,22 +21,51 @@ export type BookingWithDetails = typeof bookings.$inferSelect & {
 };
 
 export async function getAllVenues() {
-  const dbVenues = await db.select().from(venues).orderBy(venues.sortOrder);
+  const result = await db.select({
+    id: venues.id,
+    nameAr: venues.nameAr,
+    section: venues.section,
+    sectionName: sections.nameAr,
+    capacity: venues.capacity,
+    isDouble: venues.isDouble,
+    sortOrder: venues.sortOrder,
+  })
+  .from(venues)
+  .leftJoin(sections, eq(venues.section, sections.id))
+  .orderBy(asc(venues.sortOrder));
   
-  // Filter and Merge: Only show venues that exist in our VENUES_CONFIG
-  return dbVenues
-    .filter(dv => VENUES_CONFIG.some(c => c.id === dv.id))
-    .map(dv => {
-      const config = VENUES_CONFIG.find(c => c.id === dv.id)!;
-      return {
-        ...dv,
-        nameAr: config.nameAr,
-        section: config.section,
-        capacity: config.capacity ?? dv.capacity,
-        isDouble: config.isDouble,
-        sortOrder: config.sortOrder,
-      };
-    });
+  return result;
+}
+
+export async function createVenue(data: typeof venues.$inferInsert) {
+  await requireAdmin();
+  const result = await db.insert(venues).values(data).returning();
+  revalidatePath("/admin/venues");
+  revalidatePath("/venues");
+  return result[0];
+}
+
+export async function updateVenue(id: string, data: Partial<typeof venues.$inferInsert>) {
+  await requireAdmin();
+  const result = await db.update(venues).set(data).where(eq(venues.id, id)).returning();
+  revalidatePath("/admin/venues");
+  revalidatePath("/venues");
+  return result[0];
+}
+
+export async function deleteVenue(id: string) {
+  await requireAdmin();
+  
+  // Check for existing bookings
+  const existingBookings = await db.select().from(bookings).where(eq(bookings.venueId, id)).limit(1);
+  if (existingBookings.length > 0) {
+    throw new Error("لا يمكن حذف القاعة لوجود حجوزات مرتبطة بها");
+  }
+
+  await db.delete(venues).where(eq(venues.id, id));
+  revalidatePath("/admin/venues");
+  revalidatePath("/venues");
+  return { success: true };
 }
 
 export async function getBookingsForVenue(venueId: string, weekStart: Date): Promise<BookingWithDetails[]> {

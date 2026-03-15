@@ -11,6 +11,8 @@ export const metadata = {
   description: "نظام حجز القاعات",
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,6 +27,7 @@ export default function RootLayout({
     >
       <body>
         {children}
+        <Toaster position="bottom-left" />
       </body>
     </html>
   );

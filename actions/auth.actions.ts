@@ -5,6 +5,7 @@ import { users } from "@/db/schema";
 import { createSession, deleteSession, hashPassword, verifyPassword, getSession } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function loginAction(formData: FormData): Promise<{ success: boolean; error?: string }> {
   try {
@@ -28,16 +29,17 @@ export async function loginAction(formData: FormData): Promise<{ success: boolea
       return { success: false, error: "البريد الإلكتروني أو كلمة المرور غير صحيحة" };
     }
 
-    // Sync role based on ADMIN_EMAILS to allow existing users to become admins
+    if (user.status === "rejected") {
+      return { success: false, error: "تم رفض طلب عضوية هذا الحساب. يرجى التواصل مع الإدارة." };
+    }
+
+    // Role Sync Logic: 
+    // - If user is in ADMIN_EMAILS list, ensure they are admin and active.
     const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map((e) => e.trim().toLowerCase());
-    const isNowAdmin = adminEmails.includes(email.toLowerCase());
+    const shouldBeAdmin = adminEmails.includes(email.toLowerCase());
     
-    if (isNowAdmin && user.role !== "admin") {
-      await db.update(users).set({ role: "admin" }).where(eq(users.id, user.id));
-    } else if (!isNowAdmin && user.role === "admin") {
-      // Optional: Demote if removed from list? 
-      // User_global says " Elite Full-Stack Architect", let's be strict for security.
-      await db.update(users).set({ role: "user" }).where(eq(users.id, user.id));
+    if (shouldBeAdmin && (user.role !== "admin" || user.status !== "active")) {
+      await db.update(users).set({ role: "admin", status: "active" }).where(eq(users.id, user.id));
     }
 
     await createSession(user.id);
@@ -77,13 +79,16 @@ export async function registerAction(formData: FormData): Promise<{ success: boo
     
     // Check if the user is an admin
     const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map((e) => e.trim().toLowerCase());
-    const role = adminEmails.includes(email.toLowerCase()) ? "admin" : "user";
+    const isAdmin = adminEmails.includes(email.toLowerCase());
+    const role = isAdmin ? "admin" : "user";
+    const status = isAdmin ? "active" : "pending_approval";
 
     const insertResult = await db.insert(users).values({
       name,
       email: email.toLowerCase(),
       passwordHash,
       role,
+      status,
     }).returning({ id: users.id });
 
     if (!insertResult.length) {
@@ -99,7 +104,7 @@ export async function registerAction(formData: FormData): Promise<{ success: boo
   }
 }
 
-export async function logoutAction(): Promise<{ success: boolean }> {
+export async function logoutAction(): Promise<void> {
   try {
     await deleteSession();
   } catch (error) {
@@ -107,5 +112,5 @@ export async function logoutAction(): Promise<{ success: boolean }> {
   }
   // No error handling needed for logout to the client really, mostly silent.
   revalidatePath("/");
-  return { success: true };
+  redirect("/login");
 }
