@@ -1,4 +1,4 @@
-import SectionForm from "@/components/admin/SectionForm";
+import SectionForm from "@/components/Admin/SectionForm";
 import { requireAdmin } from "@/lib/auth-middleware";
 
 export default async function NewSectionPage() {

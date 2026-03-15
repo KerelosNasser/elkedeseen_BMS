@@ -1,9 +1,9 @@
-import SectionForm from "@/components/admin/SectionForm";
 import { requireAdmin } from "@/lib/auth-middleware";
 import { db } from "@/db";
 import { sections } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import SectionForm from "@/components/Admin/SectionForm";
 
 interface EditSectionPageProps {
   params: Promise<{ id: string }>;

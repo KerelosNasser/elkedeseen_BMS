@@ -2,7 +2,7 @@ import { getAllSections } from "@/actions/section.actions";
 import { requireAdmin } from "@/lib/auth-middleware";
 import { LayoutGrid, Plus, Edit2, Trash2, ListOrdered } from "lucide-react";
 import Link from "next/link";
-import DeleteSectionButton from "@/components/admin/DeleteSectionButton";
+import DeleteSectionButton from "@/components/Admin/DeleteSectionButton";
 
 export default async function AdminSectionsPage() {
   await requireAdmin();

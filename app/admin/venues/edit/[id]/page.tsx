@@ -1,4 +1,4 @@
-import VenueForm from "@/components/admin/VenueForm";
+import VenueForm from "@/components/Admin/VenueForm";
 import { requireAdmin } from "@/lib/auth-middleware";
 import { db } from "@/db";
 import { venues } from "@/db/schema";

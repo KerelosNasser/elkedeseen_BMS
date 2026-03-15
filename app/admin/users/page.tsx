@@ -3,8 +3,8 @@ import { requireAdmin } from "@/lib/auth-middleware";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { Shield, User, Search, UserCheck, UserX, Clock } from "lucide-react";
-import UserRoleToggle from "@/components/admin/UserRoleToggle";
-import UserStatusActions from "@/components/admin/UserStatusActions";
+import UserRoleToggle from "@/components/Admin/UserRoleToggle";
+import UserStatusActions from "@/components/Admin/UserStatusActions";
 
 export default async function AdminUsersPage() {
   await requireAdmin();

@@ -2,7 +2,7 @@ import { getAllVenues } from "@/actions/venue.actions";
 import { requireAdmin } from "@/lib/auth-middleware";
 import { MapPin, Users, Layers, ExternalLink, Plus, Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
-import DeleteVenueButton from "@/components/admin/DeleteVenueButton";
+import DeleteVenueButton from "@/components/Admin/DeleteVenueButton";
 
 export default async function AdminVenuesPage() {
   await requireAdmin();
