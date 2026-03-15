@@ -64,16 +64,8 @@ export async function sendEmail({
   fromName?: string;
   replyTo?: string;
 }) {
-  // If SMTP is not configured, log to console for development
   if (!process.env.SMTP_USER || !process.env.SMTP_PASS || process.env.SMTP_USER === 'your-email@gmail.com') {
-    console.log('\x1b[36m%s\x1b[0m', '📧 [EMAIL SYSTEM - MOCK MODE]');
-    console.log(`\x1b[33mTo:\x1b[0m ${Array.isArray(to) ? to.join(', ') : to}`);
-    console.log(`\x1b[33mFrom Name:\x1b[0m ${fromName || 'System'}`);
-    console.log(`\x1b[33mReply-To:\x1b[0m ${replyTo || 'N/A'}`);
-    console.log(`\x1b[33mSubject:\x1b[0m ${subject}`);
-    console.log(`\x1b[33mContent Preview:\x1b[0m ${html.substring(0, 100).replace(/<[^>]*>/g, '')}...`);
-    console.log('\x1b[36m%s\x1b[0m', '---------------------------');
-    return { success: true, message: 'Email logged to console (SMTP not configured or placeholder used)' };
+    return { success: true, messageId: 'mock-id' };
   }
 
   try {
@@ -90,7 +82,6 @@ export async function sendEmail({
       subject,
       html,
     });
-    console.log('Email sent: %s', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error('Failed to send email:', error);

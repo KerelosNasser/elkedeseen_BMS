@@ -62,7 +62,7 @@ export default async function AdminSectionsPage() {
           </table>
         </div>
 
-        {/* Mobile View */}
+
         <div className="md:hidden space-y-4">
           {sections.map((s) => (
             <div key={s.id} className="border border-church-border-light rounded-xl p-4 space-y-4 bg-white">

@@ -24,7 +24,6 @@ export type BookingWithVenueAndBooker = typeof bookings.$inferSelect & {
 export async function getBookingsForUser(userId: string): Promise<BookingWithVenueAndBooker[]> {
   const now = new Date();
   
-  // 1. Fetch where user is the booker
   const bookedByMe = await db
     .select({
       booking: {
@@ -55,7 +54,6 @@ export async function getBookingsForUser(userId: string): Promise<BookingWithVen
       )
     );
 
-  // 2. Fetch where user is an attendee
   const attending = await db
     .select({
       booking: {
@@ -105,7 +103,6 @@ export async function getBookingsForUser(userId: string): Promise<BookingWithVen
 
   const finalBookings = Array.from(allBookingsMap.values());
 
-  // Enrich with approval info for pending ones
   for (const b of finalBookings) {
     if (b.status === "pending_approval") {
       const approvals = await db
@@ -223,7 +220,6 @@ export async function createBooking(data: any) {
       }
     }
 
-    // --- Email Notifications ---
     try {
       const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(e => e.trim()) || [];
       
@@ -235,12 +231,10 @@ export async function createBooking(data: any) {
           const allAdmins = await db.select().from(users).where(eq(users.role, "admin"));
           const adminEmailsFromDb = allAdmins.map(a => a.email);
           
-          // Use config emails as fallback or addition
           const combinedEmails = Array.from(new Set([...adminEmailsFromDb, ...adminEmails]));
 
           if (combinedEmails.length > 0) {
             if (!isRecurring) {
-              // Notify all admins about normal booking
               await sendBookingNotification({
                 venueName: venue.nameAr,
                 bookerName: booker.name,
@@ -251,7 +245,6 @@ export async function createBooking(data: any) {
                 adminEmails: combinedEmails
               });
             } else {
-              // Notify other admins (excluding the booker) about approval request
               const otherAdminsEmails = allAdmins
                 .filter(a => a.id !== bookedBy)
                 .map(a => a.email);
@@ -273,7 +266,6 @@ export async function createBooking(data: any) {
       }
     } catch (mailError) {
       console.error("Failed to trigger email notifications:", mailError);
-      // Don't fail the booking if email fails
     }
 
     revalidatePath("/");
@@ -286,13 +278,8 @@ export async function createBooking(data: any) {
 
 export async function deleteBooking(bookingId: string) {
   try {
-    // Delete Attendees First (Cascading could be set in schema, but doing it manually is safe)
     await db.delete(bookingAttendees).where(eq(bookingAttendees.bookingId, bookingId));
-    
-    // Delete Approvals
     await db.delete(recurringApprovals).where(eq(recurringApprovals.bookingId, bookingId));
-
-    // Delete Booking
     await db.delete(bookings).where(eq(bookings.id, bookingId));
     
     revalidatePath("/");

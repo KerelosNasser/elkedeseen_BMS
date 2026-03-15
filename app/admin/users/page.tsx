@@ -31,7 +31,6 @@ export default async function AdminUsersPage() {
       </div>
 
       <div className="church-card p-6 animate-fade-up" style={{ animationDelay: "100ms" }}>
-        {/* Mobile Search - Visual Only for now */}
         <div className="relative mb-6">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-church-text-light w-5 h-5" />
           <input 

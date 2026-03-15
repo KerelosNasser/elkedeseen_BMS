@@ -20,7 +20,6 @@ export default function AttendeeSelector({ value, onChange, currentUserId, curre
   
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -31,7 +30,6 @@ export default function AttendeeSelector({ value, onChange, currentUserId, curre
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Debounced search
   useEffect(() => {
     const handler = setTimeout(async () => {
       if (query.trim().length >= 2) {
@@ -66,9 +64,7 @@ export default function AttendeeSelector({ value, onChange, currentUserId, curre
     <div className="w-full relative" dir="rtl" ref={dropdownRef}>
       <label className="form-label block mb-2">المشاركون</label>
 
-      {/* Selected Chips Box (ABOVE Input per specs) */}
       <div className="flex flex-wrap gap-2 mb-3">
-        {/* The booker themselves chip */}
         <div className="flex items-center gap-2 bg-church-bg-warm px-3 py-1.5 rounded-full border border-church-border">
           <div className="w-6 h-6 rounded-full bg-church-gold-light/60 flex items-center justify-center text-church-gold-dark font-body font-bold text-xs shrink-0">
             {currentUserName.charAt(0)}
@@ -76,7 +72,6 @@ export default function AttendeeSelector({ value, onChange, currentUserId, curre
           <span className="text-sm font-body text-church-text font-bold">{currentUserName} (أنت)</span>
         </div>
 
-        {/* Other selected users */}
         {value.filter((u) => u.id !== currentUserId).map((user) => (
           <div key={user.id} className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-church-border-light shadow-sm">
             <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-body font-bold text-xs shrink-0">
@@ -94,7 +89,6 @@ export default function AttendeeSelector({ value, onChange, currentUserId, curre
         ))}
       </div>
 
-      {/* Search Input */}
       <div className="relative">
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-church-text-light">
           {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
@@ -109,7 +103,6 @@ export default function AttendeeSelector({ value, onChange, currentUserId, curre
         />
       </div>
 
-      {/* Dropdown Results */}
       {isOpen && results.length > 0 && (
         <div className="absolute z-50 w-full mt-1 bg-white border border-church-border-light rounded-lg soft-shadow-md max-h-[200px] overflow-y-auto church-scroll">
           {results.map((user) => {
@@ -142,7 +135,6 @@ export default function AttendeeSelector({ value, onChange, currentUserId, curre
         </div>
       )}
       
-      {/* Hidden inputs to capture IDs for FormData submission if used inside a native form */}
       {value.map((user) => (
         <input key={user.id} type="hidden" name="attendeeIds" value={user.id} />
       ))}

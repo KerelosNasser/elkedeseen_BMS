@@ -1,14 +1,11 @@
 import { pgTable, text, integer, boolean, timestamp, uniqueIndex, index, unique } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 
-// Helper for shorter, URL-safe IDs
 const generateId = () => Math.random().toString(36).substring(2, 8) + Math.random().toString(36).substring(2, 8);
 
-// Enums
 export const roles = ['admin', 'user'] as const;
 export const statuses = ['active', 'pending_approval', 'rejected'] as const;
 
-// ── USERS ─────────────────────────────────────────────────────
 export const users = pgTable('users', {
   id: text('id').primaryKey().$defaultFn(() => generateId()),
   name: text('name').notNull(),
@@ -23,14 +20,12 @@ export const users = pgTable('users', {
   ];
 });
 
-// ── SECTIONS ──────────────────────────────────────────────────
 export const sections = pgTable('sections', {
   id: text('id').primaryKey().$defaultFn(() => generateId()),
   nameAr: text('nameAr').notNull(),
   sortOrder: integer('sortOrder').default(0).notNull(),
 });
 
-// ── VENUES ────────────────────────────────────────────────────
 export const venues = pgTable('venues', {
   id: text('id').primaryKey().$defaultFn(() => generateId()),
   nameAr: text('nameAr').notNull(),
@@ -40,7 +35,6 @@ export const venues = pgTable('venues', {
   sortOrder: integer('sortOrder').notNull(),
 });
 
-// ── BOOKINGS ──────────────────────────────────────────────────
 export const bookings = pgTable('bookings', {
   id: text('id').primaryKey().$defaultFn(() => generateId()),
   venueId: text('venueId').notNull().references(() => venues.id, { onDelete: 'cascade' }),
@@ -63,7 +57,6 @@ export const bookings = pgTable('bookings', {
   ];
 });
 
-// ── BOOKING_ATTENDEES ─────────────────────────────────────────
 export const bookingAttendees = pgTable('booking_attendees', {
   id: text('id').primaryKey().$defaultFn(() => generateId()),
   bookingId: text('bookingId').notNull().references(() => bookings.id, { onDelete: 'cascade' }),
@@ -75,7 +68,6 @@ export const bookingAttendees = pgTable('booking_attendees', {
   ];
 });
 
-// ── RECURRING_APPROVALS ───────────────────────────────────────
 export const recurringApprovals = pgTable('recurring_approvals', {
   id: text('id').primaryKey().$defaultFn(() => generateId()),
   bookingId: text('bookingId').notNull().references(() => bookings.id, { onDelete: 'cascade' }),

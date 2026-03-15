@@ -33,8 +33,6 @@ export async function loginAction(formData: FormData): Promise<{ success: boolea
       return { success: false, error: "تم رفض طلب عضوية هذا الحساب. يرجى التواصل مع الإدارة." };
     }
 
-    // Role Sync Logic: 
-    // - If user is in ADMIN_EMAILS list, ensure they are admin and active.
     const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map((e) => e.trim().toLowerCase());
     const shouldBeAdmin = adminEmails.includes(email.toLowerCase());
     
@@ -77,7 +75,6 @@ export async function registerAction(formData: FormData): Promise<{ success: boo
 
     const passwordHash = await hashPassword(password);
     
-    // Check if the user is an admin
     const adminEmails = (process.env.ADMIN_EMAILS || "").split(",").map((e) => e.trim().toLowerCase());
     const isAdmin = adminEmails.includes(email.toLowerCase());
     const role = isAdmin ? "admin" : "user";
@@ -110,7 +107,6 @@ export async function logoutAction(): Promise<void> {
   } catch (error) {
     console.error("Logout error", error);
   }
-  // No error handling needed for logout to the client really, mostly silent.
   revalidatePath("/");
   redirect("/login");
 }

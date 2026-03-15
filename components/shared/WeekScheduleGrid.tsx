@@ -41,7 +41,6 @@ export default function WeekScheduleGrid({ bookings, weekStart, isDouble, onSlot
   const getSlotTop = (timeStr: string) => {
     const totalMins = parseTimeToMinutes(timeStr);
     const minsFromStart = totalMins - 7 * 60;
-    // We'll use a CSS variable for slot height to handle responsiveness easily
     return `calc((${minsFromStart} / 30) * var(--slot-height))`;
   };
 
@@ -65,15 +64,12 @@ export default function WeekScheduleGrid({ bookings, weekStart, isDouble, onSlot
       style={{ 
         "--slot-height": "36px", 
         "--hour-height": "calc(var(--slot-height) * 2)",
-        // On desktop, we want it a bit larger
         "--desktop-slot-height": "44px"
       } as any}
     >
       <div className="min-w-[700px] sm:min-w-[850px] relative [--current-slot:var(--slot-height)] sm:[--current-slot:var(--desktop-slot-height)]">
         
-        {/* Header Row: Days (Sticky) */}
         <div className="sticky top-0 z-30 grid grid-cols-[60px_repeat(7,1fr)] border-b border-church-border bg-church-bg-card shadow-sm">
-          {/* Top Right Corner (Sticky to both) */}
           <div className="sticky right-0 z-40 p-2 text-center border-l border-church-border-light bg-church-bg-card text-church-text-muted font-body text-[10px] sm:text-[11px] font-bold flex items-end justify-center">
             الوقت
           </div>
@@ -92,10 +88,8 @@ export default function WeekScheduleGrid({ bookings, weekStart, isDouble, onSlot
           })}
         </div>
 
-        {/* Grid Body */}
         <div className="relative flex">
-          {/* Times Column (Sticky horizontally) */}
-          <div className="w-[60px] flex-shrink-0 border-l border-church-border bg-white sticky right-0 z-20">
+          <div className="w-[60px] shrink-0 border-l border-church-border bg-white sticky right-0 z-20">
             {HOURS.map((hour) => (
               <div 
                 key={hour} 
@@ -109,14 +103,12 @@ export default function WeekScheduleGrid({ bookings, weekStart, isDouble, onSlot
             ))}
           </div>
 
-          {/* Days Columns */}
           <div className="flex-1 grid grid-cols-7 relative">
             {DAYS.map((dayIdx) => {
               const dayBookings = bookings.filter((b) => b.dayOfWeek === dayIdx);
               
               return (
                 <div key={dayIdx} className="relative border-l border-church-border-light last:border-l-0 min-h-full">
-                  {/* Horizontal Grid Lines */}
                   {HOURS.map((hour) => (
                     <div 
                       key={`h-${hour}`} 
@@ -124,7 +116,6 @@ export default function WeekScheduleGrid({ bookings, weekStart, isDouble, onSlot
                       style={{ top: `calc(${hour - 7} * var(--current-slot) * 2)`, height: "calc(var(--current-slot) * 2)" }} 
                     />
                   ))}
-                  {/* Half-hour lines */}
                   {HOURS.map((hour) => (
                     <div 
                       key={`h-half-${hour}`} 

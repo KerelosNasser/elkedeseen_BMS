@@ -36,7 +36,6 @@ export default function Navbar({ user }: { user: User | null }) {
     <header className="bg-white border-b-2 border-church-gold sticky top-0 z-50">
       <div className="church-container">
         <div className="flex items-center justify-between h-16">
-          {/* Right Logo & Title */}
           <Link href="/" className="flex items-center gap-3">
             <svg className="w-8 h-8 text-church-red" viewBox="0 0 24 24" fill="currentColor">
               <path d="M11 2h2v6h6v2h-6v12h-2V10H5V8h6V2z" />
@@ -46,7 +45,6 @@ export default function Navbar({ user }: { user: User | null }) {
             </span>
           </Link>
 
-          {/* Desktop Links */}
           <nav className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
@@ -66,7 +64,6 @@ export default function Navbar({ user }: { user: User | null }) {
             })}
           </nav>
 
-          {/* Desktop User info & Logout */}
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <div className="flex items-center gap-3">
@@ -89,7 +86,6 @@ export default function Navbar({ user }: { user: User | null }) {
             )}
           </div>
 
-          {/* Mobile menu button */}
           <button 
             className="md:hidden p-2 text-church-text hover:text-church-red focus:outline-none"
             onClick={() => setMobileOpen(true)}
@@ -99,9 +95,8 @@ export default function Navbar({ user }: { user: User | null }) {
         </div>
       </div>
 
-      {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/50" onClick={() => setMobileOpen(false)}>
+        <div className="fixed inset-0 z-100 bg-black/50" onClick={() => setMobileOpen(false)}>
           <div 
             className="absolute right-0 top-0 bottom-0 w-3/4 max-w-sm bg-white shadow-xl flex flex-col"
             onClick={(e) => e.stopPropagation()}
@@ -116,7 +111,7 @@ export default function Navbar({ user }: { user: User | null }) {
               </button>
             </div>
 
-            <nav className="flex flex-col p-4 gap-2 flex-grow overflow-y-auto">
+            <nav className="flex flex-col p-4 gap-2 grow overflow-y-auto">
               {navLinks.map((link) => {
                 const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
                 return (
@@ -157,7 +152,7 @@ export default function Navbar({ user }: { user: User | null }) {
                   </form>
                 </div>
               ) : (
-                <Link href="/login" className="church-button-primary w-full py-2 !block text-center mt-2">
+                <Link href="/login" className="church-button-primary w-full py-2 block! text-center mt-2">
                   تسجيل الدخول
                 </Link>
               )}

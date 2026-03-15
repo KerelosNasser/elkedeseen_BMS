@@ -14,11 +14,11 @@ export default function BookingsTableClient({ initialBookings }: { initialBookin
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
   const filtered = initialBookings.filter(b => {
-    // Search match
+
     const searchString = `${b.title} ${b.venue.nameAr} ${b.booker.name}`.toLowerCase();
     const matchesSearch = searchString.includes(query.toLowerCase());
     
-    // Status match
+
     const matchesStatus = statusFilter === "all" || b.status === statusFilter;
 
     return matchesSearch && matchesStatus;
@@ -36,7 +36,7 @@ export default function BookingsTableClient({ initialBookings }: { initialBookin
     setIsDeleting(id);
     const res = await deleteBooking(id);
     if (res.success) {
-      router.refresh(); // reload data
+      router.refresh();
     } else {
       alert(res.error || "فشل الحذف");
     }
@@ -45,7 +45,7 @@ export default function BookingsTableClient({ initialBookings }: { initialBookin
 
   return (
     <div className="space-y-6" dir="rtl">
-      {/* Filters Bar */}
+
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-church-text-light w-5 h-5" />
@@ -81,7 +81,7 @@ export default function BookingsTableClient({ initialBookings }: { initialBookin
           </div>
         ) : (
           <>
-            {/* Desktop Table View */}
+
             <div className="hidden md:block overflow-x-auto">
               <table className="admin-table w-full">
                 <thead>
@@ -144,7 +144,7 @@ export default function BookingsTableClient({ initialBookings }: { initialBookin
               </table>
             </div>
 
-            {/* Mobile Card View */}
+
             <div className="md:hidden divide-y divide-church-border-light">
               {filtered.map(b => (
                 <div key={b.id} className="p-4 space-y-3">

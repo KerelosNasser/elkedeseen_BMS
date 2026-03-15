@@ -50,7 +50,7 @@ export default async function AdminDashboardPage() {
   const totalVenues = venuesCountRes[0].value;
   const activeUsersCount = usersCountRes[0].value;
   const pendingUsersCount = pendingUsersRes[0].value;
-  const pendingCount = pendingApprovals.length; // This is for bookings
+  const pendingCount = pendingApprovals.length;
 
   const stats = [
     { label: "حجوزات هذا الأسبوع", value: totalBookings },
@@ -135,7 +135,6 @@ export default async function AdminDashboardPage() {
               </div>
             ) : (
               <>
-                {/* Desktop Table View */}
                 <div className="hidden md:block overflow-x-auto">
                   <table className="admin-table w-full">
                     <thead>

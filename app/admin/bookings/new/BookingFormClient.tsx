@@ -81,8 +81,7 @@ export default function BookingFormClient({ venues, sections, currentUserId, cur
       const endTime = calculateEndTime(startTime, durationMins);
       const startSec = `${startTime}:00`;
 
-      // If single booking, expires right after the day.
-      // If recurring, expires at the selected expiresAtStr date.
+
       let expiresAt = new Date(dateStr);
       expiresAt.setHours(23, 59, 59);
 
@@ -92,7 +91,7 @@ export default function BookingFormClient({ venues, sections, currentUserId, cur
       }
 
       const attendeeIds = [currentUserId, ...attendees.map(a => a.id)];
-      // deduplicate just in case
+
       const uniqueAttendeeIds = Array.from(new Set(attendeeIds));
 
       const res = await createBooking({
@@ -157,7 +156,7 @@ export default function BookingFormClient({ venues, sections, currentUserId, cur
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Title */}
+
         <div className="md:col-span-2">
           <label className="form-label block mb-2">اسم الحدث / الموضوع</label>
           <input
@@ -171,7 +170,7 @@ export default function BookingFormClient({ venues, sections, currentUserId, cur
           />
         </div>
 
-        {/* Venue */}
+
         <div className="md:col-span-2">
           <label className="form-label mb-2 flex items-center gap-2"><MapPin className="w-4 h-4 text-church-red" /> القاعة</label>
           <select
@@ -198,7 +197,7 @@ export default function BookingFormClient({ venues, sections, currentUserId, cur
           </select>
         </div>
 
-        {/* Date */}
+
         <div>
           <label className="form-label mb-2 flex items-center gap-2"><Calendar className="w-4 h-4 text-church-gold-dark" /> التاريخ</label>
           <input
@@ -211,7 +210,7 @@ export default function BookingFormClient({ venues, sections, currentUserId, cur
           />
         </div>
 
-        {/* Time and Duration */}
+
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="form-label mb-2 flex items-center gap-2"><Clock className="w-4 h-4 text-church-gold-dark" /> وقت البدء</label>
@@ -237,7 +236,7 @@ export default function BookingFormClient({ venues, sections, currentUserId, cur
           </div>
         </div>
 
-        {/* Recurring Toggle */}
+
         <div className="md:col-span-2 mt-4">
           <label className="flex items-center gap-3 cursor-pointer p-4 border border-church-border-light rounded-xl hover:bg-church-bg-warm transition-colors">
             <input
@@ -253,7 +252,7 @@ export default function BookingFormClient({ venues, sections, currentUserId, cur
           </label>
         </div>
 
-        {/* Recurring Expiry */}
+
         {isRecurring && (
           <div className="md:col-span-2 animate-fade-up">
             <label className="form-label block mb-2">يتكرر حتى تاريخ</label>
@@ -270,7 +269,7 @@ export default function BookingFormClient({ venues, sections, currentUserId, cur
           </div>
         )}
 
-        {/* Attendees */}
+
         <div className="md:col-span-2 mt-4">
           <AttendeeSelector
             value={attendees}

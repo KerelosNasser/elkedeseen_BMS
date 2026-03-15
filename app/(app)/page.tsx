@@ -13,7 +13,6 @@ export default async function HomePage() {
   const today = startOfToday();
   const DAYS = [0, 1, 2, 3, 4, 5, 6]; 
   
-  // Format times (assuming startTime is "HH:mm:ss")
   const formatTime = (timeStr: string) => {
     const [h, m] = timeStr.split(":");
     const date = new Date();
@@ -23,7 +22,6 @@ export default async function HomePage() {
 
   return (
     <div className="church-container church-section space-y-12">
-      {/* Header */}
       <div className="text-center animate-fade-up">
         <h1 className="section-title">أهلاً بك، {user.name}</h1>
         <div className="gold-divider">

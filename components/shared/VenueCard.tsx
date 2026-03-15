@@ -39,7 +39,6 @@ interface VenueCardProps {
 export default function VenueCard({ venue, bookings, weekStart }: VenueCardProps) {
   const [expanded, setExpanded] = useState(false);
 
-  // Group bookings by day to show mini blocks
   const daysWithBookings = Array.from({ length: 7 }, (_, i) => {
     return bookings.filter(b => b.dayOfWeek === i).length > 0;
   });
@@ -70,7 +69,6 @@ export default function VenueCard({ venue, bookings, weekStart }: VenueCardProps
           </div>
         </div>
 
-        {/* Mini week summary */}
         <div className="mb-4 flex-1">
           <p className="text-[10px] text-church-text-muted mb-2 font-body font-semibold opacity-80">ارتباطات الأسبوع:</p>
           <div className="flex items-center gap-1 rtl:space-x-reverse" dir="rtl">
@@ -98,7 +96,6 @@ export default function VenueCard({ venue, bookings, weekStart }: VenueCardProps
         </button>
       </div>
 
-      {/* Expanded Grid Contained with max-height to prevent context loss */}
       {expanded && (
         <div className="animate-fade-up w-full h-[400px] sm:h-[550px] overflow-hidden rounded-lg border border-church-border/50 bg-white/50 p-1 shadow-inner">
            <WeekScheduleGrid bookings={bookings} weekStart={weekStart} isDouble={venue.isDouble} />

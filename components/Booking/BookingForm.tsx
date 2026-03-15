@@ -8,7 +8,7 @@ import Card, { CardBody, CardFooter, CardHeader } from "../ui/card";
 import { DatePicker } from "./Calendar";
 import BookingSlot from "./BookingSlot";
 
-// ── Types ──────────────────────────────────────────────────────
+
 
 export interface TimeSlot {
   id: string;
@@ -38,7 +38,7 @@ interface BookingFormProps {
   className?: string;
 }
 
-// ── Default data ───────────────────────────────────────────────
+
 
 const DEFAULT_SLOTS: TimeSlot[] = [
   { id: "1", time: "8:00", period: "AM", label: "الصباح", status: "available", capacity: 20, booked: 5 },
@@ -51,7 +51,7 @@ const DEFAULT_SLOTS: TimeSlot[] = [
 
 const DEFAULT_SERVICES = ["القداس الإلهي", "صلاة الساعات", "تناول الأسرار", "اجتماع خدمة", "تأبين", "زواج"];
 
-// ── Form Field ─────────────────────────────────────────────────
+
 
 interface FieldProps {
   label: string;
@@ -73,7 +73,7 @@ const Field = ({ label, error, hint, required, children }: FieldProps) => (
   </div>
 );
 
-// ── BookingForm ────────────────────────────────────────────────
+
 
 const BookingForm = ({
   slots = DEFAULT_SLOTS,
